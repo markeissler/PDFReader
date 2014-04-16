@@ -1,5 +1,8 @@
 
 ## History
+2014-04-15: Version 2.8.0
+
+	- Replaced #define constants with a singleton ReaderConfig class.
 
 2013-11-19: Version 2.7.3
 
