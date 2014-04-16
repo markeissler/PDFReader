@@ -24,6 +24,7 @@
 //
 
 #import "ReaderAppDelegate.h"
+#import "ReaderConfig.h"
 #import "ReaderDemoController.h"
 
 @implementation ReaderAppDelegate
@@ -46,6 +47,12 @@
 {
 	mainWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds]; // Main application window
 
+  // configure singleton config object before continuing!
+  ReaderConfig *readerConfig = [ReaderConfig sharedReaderConfig];
+  readerConfig.multimodeDisabled = NO;
+  readerConfig.printButtonEnabled = YES;
+  readerConfig.mailButtonEnabled = YES;
+  
 	readerDemoController = [[ReaderDemoController alloc] initWithNibName:nil bundle:nil]; // Demo controller
 
 	navigationController = [[UINavigationController alloc] initWithRootViewController:readerDemoController];

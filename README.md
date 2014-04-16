@@ -16,10 +16,10 @@ project template that you could start building from, or, just pull
 the required files into an existing project to enable PDF
 reading/viewing in your app(s).
 
-![iPod Page](http://i.imgur.com/wxC1B.png)<p></p>
-![iPod Thumbs](http://i.imgur.com/4VNyQ.png)<p></p>
-![iPad Page](http://i.imgur.com/T6nfI.png)<p></p>
-![iPad Thumbs](http://i.imgur.com/wxQRC.png)
+![iPod Page](http://i.imgur.com/wxC1B.png)<p>&nbsp;</p>
+![iPod Thumbs](http://i.imgur.com/4VNyQ.png)<p>&nbsp;</p>
+![iPad Page](http://i.imgur.com/T6nfI.png)<p>&nbsp;</p>
+![iPad Thumbs](http://i.imgur.com/wxQRC.png)<p>&nbsp;</p>
 
 After launching the sample app, tap on the left hand side of the
 screen to go back a page. Tap on the right hand side to go to the
@@ -88,6 +88,7 @@ The following files are required to incorporate the PDF
 reader into one of your projects:
 
 	CGPDFDocument.h, CGPDFDocument.m
+	ReaderConfig.h, ReaderConfig.m
 	ReaderDocument.h, ReaderDocument.m
 	ReaderConstants.h, ReaderConstants.m
 	ReaderViewController.h, ReaderViewController.m
@@ -124,38 +125,36 @@ all of the following iOS frameworks are required:
 
 	UIKit, Foundation, CoreGraphics, QuartzCore, ImageIO, MessageUI
 
-### Compile Time Options
+### Run Time Options
 
-In ReaderConstants.h the following #define options are available:
+Several option properties are available through the ReaderConfig singleton object including those listed below. In general, properties named *"Enabled"* are **TRUE** by default; properties named *"Disabled"* are **FALSE** by default.
 
-`READER_BOOKMARKS` - If TRUE, enables page bookmark support.
+`BOOL` `bookmarksEnabled` - If TRUE, enables page bookmark support.
 
-`READER_ENABLE_MAIL` - If TRUE, an email button is added to the toolbar
+`BOOL` `mailButtonEnabled` - If TRUE, an email button is added to the toolbar
 (if the device is properly configured for email support).
 
-`READER_ENABLE_PRINT` - If TRUE, a print button is added to the toolbar
+`BOOL` `printButtonEnabled` - If TRUE, a print button is added to the toolbar
 (if printing is supported and available on the device).
 
-`READER_ENABLE_THUMBS` - If TRUE, a thumbs button is added to the toolbar
+`BOOL` `thumbsButtonEnabled` - If TRUE, a thumbs button is added to the toolbar
 (enabling page thumbnail document navigation).
 
-`READER_DISABLE_IDLE` - If TRUE, the iOS idle timer is disabled while
-viewing a document (beware of battery drain).
-
-`READER_SHOW_SHADOWS` - If TRUE, a shadow is shown around each page
+`BOOL` `pageShadowsEnabled` - If TRUE, a shadow is shown around each page
 and the page content is inset by a couple of extra points.
 
-`READER_STANDALONE` - If FALSE, a "Done" button is added to the toolbar
-and the -dismissReaderViewController: delegate method is messaged when
-it is tapped.
-
-`READER_DISABLE_RETINA` - If TRUE, sets the CATiledLayer contentScale
-to 1.0f. This effectively disables retina support and results in
-non-retina device rendering speeds on retina display devices at
-the loss of retina display quality.
-
-`READER_ENABLE_PREVIEW` - If TRUE, a medium resolution page thumbnail
+`BOOL` `previewThumbsEnabled` - If TRUE, a medium resolution page thumbnail
 is displayed before the CATiledLayer starts to render the PDF page.
+
+`BOOL` `multimodeDisabled` - If TRUE, a "Done" button is added to the toolbar
+and the -dismissReaderViewController: delegate method is messaged when
+it is tapped. (Previously configured through the *standalone* #define option)
+
+`BOOL` `idleTimerDisabled` - If TRUE, the iOS idle timer is disabled while
+viewing a document (beware of battery drain).
+
+`BOOL` `retinaSupportDisabled` - If TRUE, sets the CATiledLayer contentScale to 1.0f. This effectively disables retina support and results in non-retina device rendering speeds on retina display devices at the loss of retina display quality.
+
 
 ### ReaderDocument Archiving
 
@@ -175,7 +174,7 @@ Email: joklamcak(at)gmail(dot)com
 If you find this code useful, or wish to fund further development,
 you can use PayPal to donate to the vfr-Reader project:
 
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=joklamcak@gmail.com&lc=US&item_name=vfr-Reader&no_note=1&currency_code=USD"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif"/></a>
+[![link](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=joklamcak@gmail.com&lc=US&item_name=vfr-Reader&no_note=1&currency_code=USD)
 
 ### Acknowledgements
 

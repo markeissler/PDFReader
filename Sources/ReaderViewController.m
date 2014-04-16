@@ -23,7 +23,7 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "ReaderConstants.h"
+#import "ReaderConfig.h"
 #import "ReaderViewController.h"
 #import "ThumbsViewController.h"
 #import "ReaderMainToolbar.h"
@@ -397,11 +397,10 @@
 		[self performSelector:@selector(showDocument:) withObject:nil afterDelay:0.02];
 	}
 
-#if (READER_DISABLE_IDLE == TRUE) // Option
-
-	[UIApplication sharedApplication].idleTimerDisabled = YES;
-
-#endif // end of READER_DISABLE_IDLE Option
+  if([ReaderConfig sharedReaderConfig].idleTimerDisabled)
+  {
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -410,11 +409,10 @@
 
 	lastAppearSize = self.view.bounds.size; // Track view size
 
-#if (READER_DISABLE_IDLE == TRUE) // Option
-
-	[UIApplication sharedApplication].idleTimerDisabled = NO;
-
-#endif // end of READER_DISABLE_IDLE Option
+  if([ReaderConfig sharedReaderConfig].idleTimerDisabled)
+  {
+    [UIApplication sharedApplication].idleTimerDisabled = NO;
+  }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -745,26 +743,24 @@
 
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar doneButton:(UIButton *)button
 {
-#if (READER_STANDALONE == FALSE) // Option
+  if(![ReaderConfig sharedReaderConfig].multimodeDisabled) {
+    [document saveReaderDocument]; // Save any ReaderDocument object changes
 
-	[document saveReaderDocument]; // Save any ReaderDocument object changes
+    [[ReaderThumbQueue sharedInstance] cancelOperationsWithGUID:document.guid];
 
-	[[ReaderThumbQueue sharedInstance] cancelOperationsWithGUID:document.guid];
+    [[ReaderThumbCache sharedInstance] removeAllObjects]; // Empty the thumb cache
 
-	[[ReaderThumbCache sharedInstance] removeAllObjects]; // Empty the thumb cache
+    if (printInteraction != nil) [printInteraction dismissAnimated:NO]; // Dismiss
 
-	if (printInteraction != nil) [printInteraction dismissAnimated:NO]; // Dismiss
-
-	if ([delegate respondsToSelector:@selector(dismissReaderViewController:)] == YES)
-	{
-		[delegate dismissReaderViewController:self]; // Dismiss the ReaderViewController
-	}
-	else // We have a "Delegate must respond to -dismissReaderViewController: error"
-	{
-		NSAssert(NO, @"Delegate must respond to -dismissReaderViewController:");
-	}
-
-#endif // end of READER_STANDALONE Option
+    if ([delegate respondsToSelector:@selector(dismissReaderViewController:)] == YES)
+    {
+      [delegate dismissReaderViewController:self]; // Dismiss the ReaderViewController
+    }
+    else // We have a "Delegate must respond to -dismissReaderViewController: error"
+    {
+      NSAssert(NO, @"Delegate must respond to -dismissReaderViewController:");
+    }
+  } // multimodeDisabled
 }
 
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar thumbsButton:(UIButton *)button
@@ -783,90 +779,88 @@
 
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar printButton:(UIButton *)button
 {
-#if (READER_ENABLE_PRINT == TRUE) // Option
+  if([ReaderConfig sharedReaderConfig].printButtonEnabled)
+  {
+    Class printInteractionController = NSClassFromString(@"UIPrintInteractionController");
 
-	Class printInteractionController = NSClassFromString(@"UIPrintInteractionController");
+    if ((printInteractionController != nil) && [printInteractionController isPrintingAvailable])
+    {
+      NSURL *fileURL = document.fileURL; // Document file URL
 
-	if ((printInteractionController != nil) && [printInteractionController isPrintingAvailable])
-	{
-		NSURL *fileURL = document.fileURL; // Document file URL
+      printInteraction = [printInteractionController sharedPrintController];
 
-		printInteraction = [printInteractionController sharedPrintController];
+      if ([printInteractionController canPrintURL:fileURL] == YES) // Check first
+      {
+        UIPrintInfo *printInfo = [NSClassFromString(@"UIPrintInfo") printInfo];
 
-		if ([printInteractionController canPrintURL:fileURL] == YES) // Check first
-		{
-			UIPrintInfo *printInfo = [NSClassFromString(@"UIPrintInfo") printInfo];
+        printInfo.duplex = UIPrintInfoDuplexLongEdge;
+        printInfo.outputType = UIPrintInfoOutputGeneral;
+        printInfo.jobName = document.fileName;
 
-			printInfo.duplex = UIPrintInfoDuplexLongEdge;
-			printInfo.outputType = UIPrintInfoOutputGeneral;
-			printInfo.jobName = document.fileName;
+        printInteraction.printInfo = printInfo;
+        printInteraction.printingItem = fileURL;
+        printInteraction.showsPageRange = YES;
 
-			printInteraction.printInfo = printInfo;
-			printInteraction.printingItem = fileURL;
-			printInteraction.showsPageRange = YES;
-
-			if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
-			{
-				[printInteraction presentFromRect:button.bounds inView:button animated:YES completionHandler:
-					^(UIPrintInteractionController *pic, BOOL completed, NSError *error)
-					{
-						#ifdef DEBUG
-							if ((completed == NO) && (error != nil)) NSLog(@"%s %@", __FUNCTION__, error);
-						#endif
-					}
-				];
-			}
-			else // Presume UIUserInterfaceIdiomPhone
-			{
-				[printInteraction presentAnimated:YES completionHandler:
-					^(UIPrintInteractionController *pic, BOOL completed, NSError *error)
-					{
-						#ifdef DEBUG
-							if ((completed == NO) && (error != nil)) NSLog(@"%s %@", __FUNCTION__, error);
-						#endif
-					}
-				];
-			}
-		}
-	}
-
-#endif // end of READER_ENABLE_PRINT Option
+        if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
+        {
+          [printInteraction presentFromRect:button.bounds inView:button animated:YES completionHandler:
+            ^(UIPrintInteractionController *pic, BOOL completed, NSError *error)
+            {
+              #ifdef DEBUG
+                if ((completed == NO) && (error != nil)) NSLog(@"%s %@", __FUNCTION__, error);
+              #endif
+            }
+          ];
+        }
+        else // Presume UIUserInterfaceIdiomPhone
+        {
+          [printInteraction presentAnimated:YES completionHandler:
+            ^(UIPrintInteractionController *pic, BOOL completed, NSError *error)
+            {
+              #ifdef DEBUG
+                if ((completed == NO) && (error != nil)) NSLog(@"%s %@", __FUNCTION__, error);
+              #endif
+            }
+          ];
+        }
+      }
+    }
+  } // printButtonEnabled
 }
 
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar emailButton:(UIButton *)button
 {
-#if (READER_ENABLE_MAIL == TRUE) // Option
+  if([ReaderConfig sharedReaderConfig].mailButtonEnabled)
+  {
+    if ([MFMailComposeViewController canSendMail] == NO) return;
 
-	if ([MFMailComposeViewController canSendMail] == NO) return;
+    if (printInteraction != nil) [printInteraction dismissAnimated:YES];
 
-	if (printInteraction != nil) [printInteraction dismissAnimated:YES];
+    unsigned long long fileSize = [document.fileSize unsignedLongLongValue];
 
-	unsigned long long fileSize = [document.fileSize unsignedLongLongValue];
+    if (fileSize < (unsigned long long)15728640) // Check attachment size limit (15MB)
+    {
+      NSURL *fileURL = document.fileURL; NSString *fileName = document.fileName; // Document
 
-	if (fileSize < (unsigned long long)15728640) // Check attachment size limit (15MB)
-	{
-		NSURL *fileURL = document.fileURL; NSString *fileName = document.fileName; // Document
+      NSData *attachment = [NSData dataWithContentsOfURL:fileURL options:(NSDataReadingMapped|NSDataReadingUncached) error:nil];
 
-		NSData *attachment = [NSData dataWithContentsOfURL:fileURL options:(NSDataReadingMapped|NSDataReadingUncached) error:nil];
+      if (attachment != nil) // Ensure that we have valid document file attachment data
+      {
+        MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
 
-		if (attachment != nil) // Ensure that we have valid document file attachment data
-		{
-			MFMailComposeViewController *mailComposer = [MFMailComposeViewController new];
+        [mailComposer addAttachmentData:attachment mimeType:@"application/pdf" fileName:fileName];
 
-			[mailComposer addAttachmentData:attachment mimeType:@"application/pdf" fileName:fileName];
+        [mailComposer setSubject:fileName]; // Use the document file name for the subject
 
-			[mailComposer setSubject:fileName]; // Use the document file name for the subject
+        mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
 
-			mailComposer.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-			mailComposer.modalPresentationStyle = UIModalPresentationFormSheet;
+        mailComposer.mailComposeDelegate = self; // Set the delegate
 
-			mailComposer.mailComposeDelegate = self; // Set the delegate
-
-			[self presentViewController:mailComposer animated:YES completion:NULL];
-		}
-	}
-
-#endif // end of READER_ENABLE_MAIL Option
+        [self presentViewController:mailComposer animated:YES completion:NULL];
+      }
+    }
+  } // mailButtonEnabled
 }
 
 - (void)tappedInToolbar:(ReaderMainToolbar *)toolbar markButton:(UIButton *)button

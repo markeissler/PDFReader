@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		4DD1534E18F75F9100AD6775 /* Documentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 4DD1534F18F75F9100AD6775 /* Build configuration list for PBXAggregateTarget "Documentation" */;
+			buildPhases = (
+				4DD1535318F75FE500AD6775 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Documentation;
+			productName = Documentation;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -64,6 +78,7 @@
 		45BD5AFE13AE721A00D6FE97 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45BD5AFD13AE721A00D6FE97 /* MessageUI.framework */; };
 		45D5AD9F1610E66B00706B9A /* HISTORY.md in Resources */ = {isa = PBXBuildFile; fileRef = 45D5AD9E1610E66B00706B9A /* HISTORY.md */; };
 		45D5ADA31610EADD00706B9A /* ReaderDocumentOutline.m in Sources */ = {isa = PBXBuildFile; fileRef = 45D5ADA21610EADC00706B9A /* ReaderDocumentOutline.m */; };
+		4DD1534C18F61D0400AD6775 /* ReaderConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD1534B18F61D0400AD6775 /* ReaderConfig.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -150,6 +165,8 @@
 		45D5AD9E1610E66B00706B9A /* HISTORY.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HISTORY.md; sourceTree = "<group>"; };
 		45D5ADA11610EADC00706B9A /* ReaderDocumentOutline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReaderDocumentOutline.h; path = Sources/ReaderDocumentOutline.h; sourceTree = "<group>"; };
 		45D5ADA21610EADC00706B9A /* ReaderDocumentOutline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ReaderDocumentOutline.m; path = Sources/ReaderDocumentOutline.m; sourceTree = "<group>"; };
+		4DD1534A18F61D0400AD6775 /* ReaderConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderConfig.h; sourceTree = "<group>"; };
+		4DD1534B18F61D0400AD6775 /* ReaderConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReaderConfig.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Reader-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Reader-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -297,6 +314,8 @@
 		45BD5A7C13AE6C3B00D6FE97 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				4DD1534A18F61D0400AD6775 /* ReaderConfig.h */,
+				4DD1534B18F61D0400AD6775 /* ReaderConfig.m */,
 				45AB72EF141FC0B1003524C3 /* ReaderConstants.h */,
 				45AB72F0141FC0B1003524C3 /* ReaderConstants.m */,
 				45AB72F7141FC0B1003524C3 /* ReaderDocument.h */,
@@ -391,6 +410,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* Reader */,
+				4DD1534E18F75F9100AD6775 /* Documentation */,
 			);
 		};
 /* End PBXProject section */
@@ -432,6 +452,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		4DD1535318F75FE500AD6775 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#/Users/mark/dev/IOS/PDFReader/.appledocg\n/Users/mark/dev/IOS/PDFReader/.doxywrite";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -449,6 +485,7 @@
 				45AB7319141FC0B1003524C3 /* ReaderMainPagebar.m in Sources */,
 				45AB731A141FC0B1003524C3 /* ReaderMainToolbar.m in Sources */,
 				45AB731C141FC0B1003524C3 /* ReaderThumbCache.m in Sources */,
+				4DD1534C18F61D0400AD6775 /* ReaderConfig.m in Sources */,
 				45AB731D141FC0B1003524C3 /* ReaderThumbFetch.m in Sources */,
 				45AB731E141FC0B1003524C3 /* ReaderThumbQueue.m in Sources */,
 				45AB731F141FC0B1003524C3 /* ReaderThumbRender.m in Sources */,
@@ -548,6 +585,27 @@
 			};
 			name = Testing;
 		};
+		4DD1535018F75F9100AD6775 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4DD1535118F75F9100AD6775 /* Testing */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Testing;
+		};
+		4DD1535218F75F9100AD6775 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -611,6 +669,16 @@
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				458529CF13DDE2DF00EDC79D /* Testing */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4DD1534F18F75F9100AD6775 /* Build configuration list for PBXAggregateTarget "Documentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4DD1535018F75F9100AD6775 /* Debug */,
+				4DD1535118F75F9100AD6775 /* Testing */,
+				4DD1535218F75F9100AD6775 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
