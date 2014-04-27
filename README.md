@@ -82,10 +82,24 @@ popping it. The ReaderDemoController class shows how this is
 done with a bundled PDF file. To create a 'book as an app',
 please see the ReaderBookDelegate class.
 
+### Installation - Cocoapods
+This forked version of vfr-Reader can be installed with Cocoapods! Add the following dependency to your project's podfile...
+
+For a release build:
+
+	pod "Reader", :git => "https://github.com/markeissler/Reader.git"
+	
+For a development build:
+
+	pod "Reader", :git => "https://github.com/markeissler/Reader.git", 
+		:branch => 'develop', 
+		:tag => '2.8.0-b2'
+
+**NOTE:** You will need to tweak the branch and tag settings to grab the latest development release.
+
 ### Required Files
 
-The following files are required to incorporate the PDF
-reader into one of your projects:
+The following files are required to incorporate the PDF reader into one of your projects manually:
 
 	CGPDFDocument.h, CGPDFDocument.m
 	ReaderConfig.h, ReaderConfig.m
@@ -170,6 +184,8 @@ page thumb cache is kept.
 Website: [http://www.vfr.org/](http://www.vfr.org/)
 
 Email: joklamcak(at)gmail(dot)com
+
+**FORKED contact:** This is a fork of the upstream vfr-Reader project. Contact information for this version: mark(at)mixtur(dot)com.
 
 If you find this code useful, or wish to fund further development,
 you can use PayPal to donate to the vfr-Reader project:
