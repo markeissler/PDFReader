@@ -1,46 +1,29 @@
 
-## PDF Reader Core for iOS
+## PDF Reader Core for iOS -- FORKED
+**NOTICE:** This is a **fork** of the [vfr-Reader project](http://vfr.org). Some or all of the changes from this version may eventually make it back into the upstream code. At the moment, however, I'm not making pull-requests until I figure out where this is headed.
+
+### Fork Changes
+The primary change with the current **develop** builds is the introduction of a singleton global config object (ReaderConfig) that replaces defined constants previously found in *ReaderConstants.h*. The goal was to make integration of this framework easier by providing a mechanism that would allow you to change behavior at run-time instead of during compilation. IMHO you shouldn't have to dig into third-party framework code to alter defined constants, also, if you installed via [Cocoapods](http://cocoapods.org) it would make updating cumbersome.
+
+See below for more info on ReaderConfig.
 
 ### Introduction
+The [vfr-Reader project](http://vfr.org) has crafted this open source PDF reader code for fellow iOS developers struggling with wrangling PDF files onto iOS device screens.
 
-I've crafted this open source PDF reader code for fellow iOS
-developers struggling with wrangling PDF files onto iOS device
-screens.
-
-The code is universal and does not require any XIBs (as all UI
-elements are code generated, allowing for greatest flexibility).
-It runs on iPad, iPhone and iPod touch with iOS 6.0 and up. Also
-supported are the Retina displays in all new devices and is ready
-to be fully internationalized. The idea was to provide a complete
-project template that you could start building from, or, just pull
-the required files into an existing project to enable PDF
-reading/viewing in your app(s).
+The code is universal and does not require any XIBs (as all UI elements are code generated, allowing for greatest flexibility). It runs on iPad, iPhone and iPod touch with iOS 6.0 and up. Also supported are the Retina displays in all new devices and is ready to be fully internationalized. The idea was to provide a complete project template that you could start building from, or, just pull the required files into an existing project to enable PDF reading/viewing in your app(s).
 
 ![iPod Page](http://i.imgur.com/wxC1B.png)<p>&nbsp;</p>
 ![iPod Thumbs](http://i.imgur.com/4VNyQ.png)<p>&nbsp;</p>
 ![iPad Page](http://i.imgur.com/T6nfI.png)<p>&nbsp;</p>
 ![iPad Thumbs](http://i.imgur.com/wxQRC.png)<p>&nbsp;</p>
 
-After launching the sample app, tap on the left hand side of the
-screen to go back a page. Tap on the right hand side to go to the
-next page. You can also swipe left and right to change pages. Tap
-on the screen to fade in the toolbar and page slider. Double-tap
-with one finger (or pinch out) to zoom in. Double tap with two
-fingers (or pinch in) to zoom out.
+After launching the sample app, tap on the left hand side of the screen to go back a page. Tap on the right hand side to go to the next page. You can also swipe left and right to change pages. Tap on the screen to fade in the toolbar and page slider. Double-tap with one finger (or pinch out) to zoom in. Double tap with two fingers (or pinch in) to zoom out.
 
-This implementation has been tested with large PDF files (over
-250MB in size and over 2800 pages in length) and with PDF files of
-all flavors (from text only documents to graphics heavy magazines).
-It also works rather well on older devices (such as the iPod touch
-4th generation and iPhone 3GS) and takes advantage of the dual-core
-processor (via CATiledLayer and multi-threading) in new devices.
+This implementation has been tested with large PDF files (over 250MB in size and over 2800 pages in length) and with PDF files of all flavors (from text only documents to graphics heavy magazines). It also works rather well on older devices (such as the iPod touch 4th generation and iPhone 3GS) and takes advantage of the dual-core processor (via CATiledLayer and multi-threading) in new devices.
 
-To see an example open source PDF Viewer App that uses this code
-as its base, have a look at this project repository on GitHub:
-https://github.com/vfr/Viewer
+To see an example open source PDF Viewer App that uses this code as its base, have a look at this project repository on GitHub: [https://github.com/vfr/Viewer](https://github.com/vfr/Viewer)
 
 ### Features
-
 Multithreaded: The UI is always quite smooth and responsive.
 
 Supports:
@@ -51,36 +34,30 @@ Supports:
  - PDF links (URI and go to page).
  - PDFs with rotated pages.
 
+### Building Included Demos
+There are two demos included with this framework:
+
+1. ReaderBookDelegate
+2. ReaderAppDelegate
+
+The *ReaderBookDelegate* builds a demo that displays the last pdf found in the app bundle. It is a *standalone* pdf reader.
+
+The *ReaderAppDelegate* builds a demo that enables multimode, which could be used to implement a generic reader, allowing the user to switch among a list of pdfs. For the demo, the user is just presented with a target ("TAP") that triggers the display of the last pdf found in the bundle. If you modify the example, you could provide multiple tap targets.
+
+By default, the *ReaderBookDelegate* demo will be built. To build the other demo, simply edit the *main.m* source file and comment out (or undefine) the following line:
+
+	#define READER_BOOK_DEMO
+	
+Clean and re-build the project.
+
 ### Notes
+Version 2.x of the PDF reader code was originally developed and tested under Xcode 3.2.6, LLVM 1.7 and iOS 4 with current development and testing under Xcode 5.0, LLVM 5.0 and iOS 7. Please note that as of v2.6, the code was refactored to use ARC.
 
-Version 2.x of the PDF reader code was originally developed
-and tested under Xcode 3.2.6, LLVM 1.7 and iOS 4 with current
-development and testing under Xcode 5.0, LLVM 5.0 and iOS 7.
-Please note that as of v2.6, the code was refactored to use ARC.
+Version 2.x of the PDF reader code was originally developed and tested under Xcode 3.2.6, LLVM 1.7, iOS 4.3.5 and iOS 4.2.1 with current development and testing under Xcode 5.0, LLVM 5.0, iOS 7. Please note that as of v2.6, the code was refactored to use ARC.
 
-Version 2.x of the PDF reader code was originally developed and
-tested under Xcode 3.2.6, LLVM 1.7, iOS 4.3.5 and iOS 4.2.1 with
-current development and testing under Xcode 5.0, LLVM 5.0, iOS 7.
-Please note that as of v2.6, the code was refactored to use ARC.
+The overall PDF reader functionality is encapsulated in the ReaderViewController class. To present a document with this class, you first need to create a ReaderDocument object with the file path to the PDF document and then initialize a new ReaderViewController with this ReaderDocument object. The ReaderViewController class uses a ReaderDocument object to store information about the document and to keep track of document properties (thumb cache directory path, bookmarks and the current page number for example).
 
-The overall PDF reader functionality is encapsulated in the
-ReaderViewController class. To present a document with this class,
-you first need to create a ReaderDocument object with the file path
-to the PDF document and then initialize a new ReaderViewController
-with this ReaderDocument object. The ReaderViewController class uses
-a ReaderDocument object to store information about the document and
-to keep track of document properties (thumb cache directory path,
-bookmarks and the current page number for example).
-
-An initialized ReaderViewController can then be presented
-modally, pushed onto a UINavigationController stack, placed in
-a UITabBarController tab, or be used as a root view controller.
-Please note that since ReaderViewController implements its own
-toolbar, you need to hide the UINavigationController navigation
-bar before pushing it and then show the navigation bar after
-popping it. The ReaderDemoController class shows how this is
-done with a bundled PDF file. To create a 'book as an app',
-please see the ReaderBookDelegate class.
+An initialized ReaderViewController can then be presented modally, pushed onto a UINavigationController stack, placed in a UITabBarController tab, or be used as a root view controller. Please note that since ReaderViewController implements its own toolbar, you need to hide the UINavigationController navigation bar before pushing it and then show the navigation bar after popping it. The ReaderDemoController class shows how this is done with a bundled PDF file. To create a 'book as an app', please see the ReaderBookDelegate class.
 
 ### Installation - Cocoapods
 This forked version of vfr-Reader can be installed with Cocoapods! Add the following dependency to your project's podfile...
@@ -98,7 +75,6 @@ For a development build:
 **NOTE:** You will need to tweak the branch and tag settings to grab the latest development release.
 
 ### Required Files
-
 The following files are required to incorporate the PDF reader into one of your projects manually:
 
 	CGPDFDocument.h, CGPDFDocument.m
@@ -133,14 +109,11 @@ The following files are required to incorporate the PDF reader into one of your 
 	Localizable.strings (UTF-16 encoding)
 
 ### Required iOS Frameworks
-
-To incorporate the PDF reader code into one of your projects,
-all of the following iOS frameworks are required:
+To incorporate the PDF reader code into one of your projects, all of the following iOS frameworks are required:
 
 	UIKit, Foundation, CoreGraphics, QuartzCore, ImageIO, MessageUI
 
-### Run Time Options
-
+### ReaderConfig - Run Time Options
 Several option properties are available through the ReaderConfig singleton object including those listed below. In general, properties named *"Enabled"* are **TRUE** by default; properties named *"Disabled"* are **FALSE** by default.
 
 `BOOL` `bookmarksEnabled` - If TRUE, enables page bookmark support.
@@ -171,13 +144,7 @@ viewing a document (beware of battery drain).
 
 
 ### ReaderDocument Archiving
-
-To change where the property list for ReaderDocument objects is stored
-(~/Library/Application Support/ by default), see the +archiveFilePath:
-method in the ReaderDocument.m source file. Archiving and unarchiving
-of the ReaderDocument object for a document is mandatory since this is
-where the current page number, bookmarks and directory of the document
-page thumb cache is kept.
+To change where the property list for ReaderDocument objects is stored (~/Library/Application Support/ by default), see the +archiveFilePath: method in the ReaderDocument.m source file. Archiving and unarchiving of the ReaderDocument object for a document is mandatory since this is where the current page number, bookmarks and directory of the document page thumb cache is kept.
 
 ### Contact Info
 
@@ -187,17 +154,12 @@ Email: joklamcak(at)gmail(dot)com
 
 **FORKED contact:** This is a fork of the upstream vfr-Reader project. Contact information for this version: mark(at)mixtur(dot)com.
 
-If you find this code useful, or wish to fund further development,
-you can use PayPal to donate to the vfr-Reader project:
+If you find this code useful, or wish to fund further development, you can use PayPal to donate to the vfr-Reader project:
 
 [![link](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=joklamcak@gmail.com&lc=US&item_name=vfr-Reader&no_note=1&currency_code=USD)
 
 ### Acknowledgements
-
-The PDF link support code in the ReaderContentPage class is based on
-the links navigation code by Sorin Nistor from
-[http://ipdfdev.com/](http://ipdfdev.com/).
+The PDF link support code in the ReaderContentPage class is based on the links navigation code by Sorin Nistor from [http://ipdfdev.com/](http://ipdfdev.com/).
 
 ### License
-
 This code has been made available under the MIT License.

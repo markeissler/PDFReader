@@ -24,6 +24,7 @@
 //
 
 #import "ReaderBookDelegate.h"
+#import "ReaderConfig.h"
 #import "ReaderViewController.h"
 
 @interface ReaderBookDelegate () <ReaderViewControllerDelegate>
@@ -60,6 +61,10 @@
 
 	if (document != nil) // Must have a valid ReaderDocument object in order to proceed
 	{
+    // configure singleton config object before continuing!
+    ReaderConfig *readerConfig = [ReaderConfig sharedReaderConfig];
+    readerConfig.multimodeDisabled = YES;
+    
 		readerViewController = [[ReaderViewController alloc] initWithReaderDocument:document];
 
 		readerViewController.delegate = self; // Set the ReaderViewController delegate to self

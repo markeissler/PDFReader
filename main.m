@@ -29,6 +29,23 @@ int main(int argc, char *argv[])
 {
 	@autoreleasepool
 	{
+    //
+    // Define READER_BOOK_DEMO to build ReaderBookDelegate exmaple.
+    //
+    // ReaderAppDelegate creates a demo that enables multimode, which could be
+    // used to implement a generic reader, allowing the user to switch among
+    // a list of pdfs. For the demo, the user is just presented with a target
+    // ("TAP") that triggers the display of the last pdf found in the bundle. If
+    // you modify the example, you could provide multiple tap targets.
+    //
+    // ReaderBookDelegate creates a demo that displays the last pdf found in the
+    // app bundle.
+    //
+#define READER_BOOK_DEMO
+#ifdef READER_BOOK_DEMO
+    return UIApplicationMain(argc, argv, nil, @"ReaderBookDelegate");
+#else
 		return UIApplicationMain(argc, argv, nil, @"ReaderAppDelegate");
+#endif
 	}
 }
