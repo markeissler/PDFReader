@@ -23,7 +23,7 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "ReaderConstants.h"
+#import "ReaderConfig.h"
 #import "ReaderContentPage.h"
 #import "ReaderContentTile.h"
 #import "CGPDFDocument.h"
@@ -528,14 +528,14 @@
 	CGPDFDocumentRelease(_PDFDocRef), _PDFDocRef = NULL;
 }
 
-#if (READER_DISABLE_RETINA == TRUE) // Option
-
 - (void)didMoveToWindow
 {
-	self.contentScaleFactor = 1.0f; // Override scale factor
+  if([ReaderConfig sharedReaderConfig].retinaSupportDisabled)
+  {
+    // turn off retian support
+    self.contentScaleFactor = 1.0f; // Override scale factor
+  }
 }
-
-#endif // end of READER_DISABLE_RETINA Option
 
 #pragma mark CATiledLayer delegate methods
 

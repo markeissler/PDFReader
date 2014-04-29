@@ -23,7 +23,7 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "ReaderConstants.h"
+#import "ReaderConfig.h"
 #import "ReaderContentView.h"
 #import "ReaderContentPage.h"
 #import "ReaderThumbCache.h"
@@ -31,7 +31,11 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface ReaderContentView () <UIScrollViewDelegate>
-
+@property (nonatomic, readwrite, unsafe_unretained) float insetMargin;
+@property (nonatomic, readwrite, unsafe_unretained) float pageThumbLarge;
+@property (nonatomic, readwrite, unsafe_unretained) float pageThumbSmall;
+@property (nonatomic, readwrite, unsafe_unretained) float zoomFactor;
+@property (nonatomic, readwrite, unsafe_unretained) float zoomMaximum;
 @end
 
 @implementation ReaderContentView
@@ -43,25 +47,18 @@
 	UIView *theContainerView;
 }
 
-#pragma mark Constants
-
-#define ZOOM_FACTOR 2.0f
-#define ZOOM_MAXIMUM 16.0f
-
-#if (READER_SHOW_SHADOWS == TRUE) // Option
-	#define CONTENT_INSET 4.0f
-#else
-	#define CONTENT_INSET 2.0f
-#endif // end of READER_SHOW_SHADOWS Option
-
-#define PAGE_THUMB_LARGE 240
-#define PAGE_THUMB_SMALL 144
-
 static void *ReaderContentViewContext = &ReaderContentViewContext;
 
 #pragma mark Properties
 
+// FIXME: we should use underscore consistently for data members and then get
+// rid of these @synthesize statements.
 @synthesize message;
+@synthesize contentInset = _contentInset;
+@synthesize pageThumbLarge = _pageThumbLarge;
+@synthesize pageThumbSmall = _pageThumbSmall;
+@synthesize zoomFactor = _zoomFactor;
+@synthesize zoomMaximum = _zoomMaximum;
 
 #pragma mark ReaderContentView functions
 
@@ -78,13 +75,13 @@ static inline CGFloat ZoomScaleThatFits(CGSize target, CGSize source)
 
 - (void)updateMinimumMaximumZoom
 {
-	CGRect targetRect = CGRectInset(self.bounds, CONTENT_INSET, CONTENT_INSET);
+	CGRect targetRect = CGRectInset(self.bounds, self.insetMargin, self.insetMargin);
 
 	CGFloat zoomScale = ZoomScaleThatFits(targetRect.size, theContentView.bounds.size);
 
 	self.minimumZoomScale = zoomScale; // Set the minimum and maximum zoom scales
 
-	self.maximumZoomScale = (zoomScale * ZOOM_MAXIMUM); // Max number of zoom levels
+	self.maximumZoomScale = (zoomScale * self.zoomMaximum); // Max number of zoom levels
 }
 
 - (id)initWithFrame:(CGRect)frame fileURL:(NSURL *)fileURL page:(NSUInteger)page password:(NSString *)phrase
@@ -102,7 +99,23 @@ static inline CGFloat ZoomScaleThatFits(CGSize target, CGSize source)
 		self.autoresizesSubviews = NO;
 		self.bouncesZoom = YES;
 		self.delegate = self;
-
+    
+    // apply global readerConfig settings, init data members
+    //
+    ReaderConfig *readerConfig = [ReaderConfig sharedReaderConfig];
+    
+    _insetMargin = 4.0;
+    if(!readerConfig.pageShadowsEnabled)
+    {
+      _insetMargin = 2.0;
+    }
+    
+    _zoomFactor = 2.0;
+    _zoomMaximum = 16.0;
+    _pageThumbLarge = 240;
+    _pageThumbSmall = 144;
+    
+    
 		theContentView = [[ReaderContentPage alloc] initWithURL:fileURL page:page password:phrase];
 
 		if (theContentView != nil) // Must have a valid and initialized content view
@@ -115,25 +128,23 @@ static inline CGFloat ZoomScaleThatFits(CGSize target, CGSize source)
 			theContainerView.autoresizingMask = UIViewAutoresizingNone;
 			theContainerView.backgroundColor = [UIColor whiteColor];
 
-#if (READER_SHOW_SHADOWS == TRUE) // Option
-
-			theContainerView.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-			theContainerView.layer.shadowRadius = 4.0f; theContainerView.layer.shadowOpacity = 1.0f;
-			theContainerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:theContainerView.bounds].CGPath;
-
-#endif // end of READER_SHOW_SHADOWS Option
+      if(readerConfig.pageShadowsEnabled)
+      {
+        theContainerView.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
+        theContainerView.layer.shadowRadius = 4.0f; theContainerView.layer.shadowOpacity = 1.0f;
+        theContainerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:theContainerView.bounds].CGPath;
+      } // pageShadowsEnabled
 
 			self.contentSize = theContentView.bounds.size; // Content size same as view size
-			self.contentOffset = CGPointMake((0.0f - CONTENT_INSET), (0.0f - CONTENT_INSET)); // Offset
-			self.contentInset = UIEdgeInsetsMake(CONTENT_INSET, CONTENT_INSET, CONTENT_INSET, CONTENT_INSET);
+			self.contentOffset = CGPointMake((0.0f - self.insetMargin), (0.0f - self.insetMargin)); // Offset
+			self.contentInset = UIEdgeInsetsMake(self.insetMargin, self.insetMargin, self.insetMargin, self.insetMargin);
 
-#if (READER_ENABLE_PREVIEW == TRUE) // Option
+      if(readerConfig.previewThumbEnabled)
+      {
+        theThumbView = [[ReaderContentThumb alloc] initWithFrame:theContentView.bounds]; // Page thumb view
 
-			theThumbView = [[ReaderContentThumb alloc] initWithFrame:theContentView.bounds]; // Page thumb view
-
-			[theContainerView addSubview:theThumbView]; // Add the thumb view to the container view
-
-#endif // end of READER_ENABLE_PREVIEW Option
+        [theContainerView addSubview:theThumbView]; // Add the thumb view to the container view
+      } // previewThumbEnabled
 
 			[theContainerView addSubview:theContentView]; // Add the content view to the container view
 
@@ -159,19 +170,18 @@ static inline CGFloat ZoomScaleThatFits(CGSize target, CGSize source)
 
 - (void)showPageThumb:(NSURL *)fileURL page:(NSInteger)page password:(NSString *)phrase guid:(NSString *)guid
 {
-#if (READER_ENABLE_PREVIEW == TRUE) // Option
+  if([ReaderConfig sharedReaderConfig].previewThumbEnabled)
+  {
+    BOOL large = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad); // Page thumb size
 
-	BOOL large = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad); // Page thumb size
+    CGSize size = (large ? CGSizeMake(self.pageThumbLarge, self.pageThumbLarge) : CGSizeMake(self.pageThumbSmall, self.pageThumbSmall));
 
-	CGSize size = (large ? CGSizeMake(PAGE_THUMB_LARGE, PAGE_THUMB_LARGE) : CGSizeMake(PAGE_THUMB_SMALL, PAGE_THUMB_SMALL));
+    ReaderThumbRequest *request = [ReaderThumbRequest newForView:theThumbView fileURL:fileURL password:phrase guid:guid page:page size:size];
 
-	ReaderThumbRequest *request = [ReaderThumbRequest newForView:theThumbView fileURL:fileURL password:phrase guid:guid page:page size:size];
+    UIImage *image = [[ReaderThumbCache sharedInstance] thumbRequest:request priority:YES]; // Request the page thumb
 
-	UIImage *image = [[ReaderThumbCache sharedInstance] thumbRequest:request priority:YES]; // Request the page thumb
-
-	if ([image isKindOfClass:[UIImage class]]) [theThumbView showImage:image]; // Show image from cache
-
-#endif // end of READER_ENABLE_PREVIEW Option
+    if ([image isKindOfClass:[UIImage class]]) [theThumbView showImage:image]; // Show image from cache
+  }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -237,7 +247,7 @@ static inline CGFloat ZoomScaleThatFits(CGSize target, CGSize source)
 
 	if (zoomScale < self.maximumZoomScale)
 	{
-		zoomScale *= ZOOM_FACTOR; // Zoom in
+		zoomScale *= self.zoomFactor; // Zoom in
 
 		if (zoomScale > self.maximumZoomScale)
 		{
@@ -254,7 +264,7 @@ static inline CGFloat ZoomScaleThatFits(CGSize target, CGSize source)
 
 	if (zoomScale > self.minimumZoomScale)
 	{
-		zoomScale /= ZOOM_FACTOR; // Zoom out
+		zoomScale /= self.zoomFactor; // Zoom out
 
 		if (zoomScale < self.minimumZoomScale)
 		{
