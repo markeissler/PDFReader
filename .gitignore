@@ -28,3 +28,7 @@ Pods
 
 # Documentation (Doxygen or appledoc)
 Documentation
+
+# Doxywrite
+.doxywrite.sh
+.doxywrite-example.cfg
