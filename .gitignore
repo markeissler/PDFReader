@@ -36,3 +36,8 @@ Documentation
 # Doxywrite
 .doxywrite.sh
 .doxywrite-example.cfg
+*-Doxyfile.cfg
+
+# Xcodebump
+.xcodebump.sh
+.xcodebump-example.cfg

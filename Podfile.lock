@@ -1,15 +1,21 @@
 PODS:
-  - Doxywrite (1.1.3)
+  - Doxywrite (1.1.7)
+  - Xcodebump (1.1.5)
 
 DEPENDENCIES:
   - Doxywrite (from `https://github.com/markeissler/Doxywrite`, branch `master`)
+  - Xcodebump (from `https://github.com/markeissler/Xcodebump`, branch `master`)
 
 EXTERNAL SOURCES:
   Doxywrite:
     :branch: master
     :git: https://github.com/markeissler/Doxywrite
+  Xcodebump:
+    :branch: master
+    :git: https://github.com/markeissler/Xcodebump
 
 SPEC CHECKSUMS:
-  Doxywrite: 4d30f47dec79ff9805b75a2e9d0fe5ad5905dbde
+  Doxywrite: 109463d617e2c0d35be122f32b1f8c548d430c5b
+  Xcodebump: 9310eb3ac88fbc87b0bb896e5028ed9df30121e5
 
 COCOAPODS: 0.32.1
