@@ -23,6 +23,10 @@ profile
 DerivedData
 .idea/
 
+# RVM
+.ruby-gemset
+.ruby-version
+
 # Pods (CocoaPods)
 Pods
 

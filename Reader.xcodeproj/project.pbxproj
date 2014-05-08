@@ -464,7 +464,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#/Users/mark/dev/IOS/PDFReader/.appledocg\n/Users/mark/dev/IOS/PDFReader/.doxywrite.sh";
+			shellScript = "#/Users/mark/dev/IOS/PDFReader/.appledocg\nsh /Users/mark/dev/IOS/PDFReader/.doxywrite.sh -f -x PDFReader\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

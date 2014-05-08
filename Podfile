@@ -4,4 +4,4 @@
 #
 platform :ios, "7.0"
 
-pod "Doxywrite", :git => 'https://github.com/markeissler/Doxywrite', :branch => 'develop'
+pod "Doxywrite", :git => 'https://github.com/markeissler/Doxywrite', :branch => 'master'
