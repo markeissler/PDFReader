@@ -1,0 +1,15 @@
+PODS:
+  - Doxywrite (1.1.3)
+
+DEPENDENCIES:
+  - Doxywrite (from `https://github.com/markeissler/Doxywrite`, branch `master`)
+
+EXTERNAL SOURCES:
+  Doxywrite:
+    :branch: master
+    :git: https://github.com/markeissler/Doxywrite
+
+SPEC CHECKSUMS:
+  Doxywrite: 4d30f47dec79ff9805b75a2e9d0fe5ad5905dbde
+
+COCOAPODS: 0.32.1
