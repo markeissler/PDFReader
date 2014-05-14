@@ -1,9 +1,8 @@
 //
 //	ThumbsViewController.m
-//	Reader v2.7.2
 //
-//	Created by Julius Oklamcak on 2011-09-01.
-//	Copyright © 2011-2013 Julius Oklamcak. All rights reserved.
+//  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
+//  Portions (C) 2014 Mark Eissler. All rights reserved.
 //
 //	Permission is hereby granted, free of charge, to any person obtaining a copy
 //	of this software and associated documentation files (the "Software"), to deal
@@ -23,25 +22,25 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "ReaderConfig.h"
+#import "PDFReaderConfig.h"
 #import "ThumbsViewController.h"
-#import "ReaderThumbRequest.h"
-#import "ReaderThumbCache.h"
-#import "ReaderDocument.h"
+#import "PDFReaderThumbRequest.h"
+#import "PDFReaderThumbCache.h"
+#import "PDFReaderDocument.h"
 
 #import <QuartzCore/QuartzCore.h>
 
-@interface ThumbsViewController () <ThumbsMainToolbarDelegate, ReaderThumbsViewDelegate>
+@interface ThumbsViewController () <ThumbsMainToolbarDelegate, PDFReaderThumbsViewDelegate>
 
 @end
 
 @implementation ThumbsViewController
 {
-	ReaderDocument *document;
+	PDFReaderDocument *document;
 
 	ThumbsMainToolbar *mainToolbar;
 
-	ReaderThumbsView *theThumbsView;
+	PDFReaderThumbsView *theThumbsView;
 
 	NSMutableArray *bookmarked;
 
@@ -67,17 +66,17 @@
 
 #pragma mark UIViewController methods
 
-- (id)initWithReaderDocument:(ReaderDocument *)object
+- (id)initWithReaderDocument:(PDFReaderDocument *)object
 {
 	id thumbs = nil; // ThumbsViewController object
 
-	if ((object != nil) && ([object isKindOfClass:[ReaderDocument class]]))
+	if ((object != nil) && ([object isKindOfClass:[PDFReaderDocument class]]))
 	{
 		if ((self = [super initWithNibName:nil bundle:nil])) // Designated initializer
 		{
 			updateBookmarked = YES; bookmarked = [NSMutableArray new]; // Bookmarked pages
 
-			document = object; // Retain the ReaderDocument object for our use
+			document = object; // Retain the PDFReaderDocument object for our use
 
 			thumbs = self; // Return an initialized ThumbsViewController object
 		}
@@ -133,9 +132,9 @@
 		scrollViewInsets.top = TOOLBAR_HEIGHT;
 	}
 
-	theThumbsView = [[ReaderThumbsView alloc] initWithFrame:scrollViewRect]; // ReaderThumbsView
+	theThumbsView = [[PDFReaderThumbsView alloc] initWithFrame:scrollViewRect]; // PDFReaderThumbsView
 	theThumbsView.contentInset = scrollViewInsets; theThumbsView.scrollIndicatorInsets = scrollViewInsets;
-	theThumbsView.delegate = self; // ReaderThumbsViewDelegate
+	theThumbsView.delegate = self; // PDFReaderThumbsViewDelegate
 	[self.view insertSubview:theThumbsView belowSubview:mainToolbar];
 
 	BOOL large = ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad);
@@ -266,17 +265,17 @@
 
 #pragma mark UIThumbsViewDelegate methods
 
-- (NSUInteger)numberOfThumbsInThumbsView:(ReaderThumbsView *)thumbsView
+- (NSUInteger)numberOfThumbsInThumbsView:(PDFReaderThumbsView *)thumbsView
 {
 	return (showBookmarked ? bookmarked.count : [document.pageCount integerValue]);
 }
 
-- (id)thumbsView:(ReaderThumbsView *)thumbsView thumbCellWithFrame:(CGRect)frame
+- (id)thumbsView:(PDFReaderThumbsView *)thumbsView thumbCellWithFrame:(CGRect)frame
 {
 	return [[ThumbsPageThumb alloc] initWithFrame:frame];
 }
 
-- (void)thumbsView:(ReaderThumbsView *)thumbsView updateThumbCell:(ThumbsPageThumb *)thumbCell forIndex:(NSInteger)index
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView updateThumbCell:(ThumbsPageThumb *)thumbCell forIndex:(NSInteger)index
 {
 	CGSize size = [thumbCell maximumContentSize]; // Get the cell's maximum content size
 
@@ -288,21 +287,21 @@
 
 	NSURL *fileURL = document.fileURL; NSString *guid = document.guid; NSString *phrase = document.password; // Document info
 
-	ReaderThumbRequest *thumbRequest = [ReaderThumbRequest newForView:thumbCell fileURL:fileURL password:phrase guid:guid page:page size:size];
+	PDFReaderThumbRequest *thumbRequest = [PDFReaderThumbRequest newForView:thumbCell fileURL:fileURL password:phrase guid:guid page:page size:size];
 
-	UIImage *image = [[ReaderThumbCache sharedInstance] thumbRequest:thumbRequest priority:YES]; // Request the thumbnail
+	UIImage *image = [[PDFReaderThumbCache sharedInstance] thumbRequest:thumbRequest priority:YES]; // Request the thumbnail
 
 	if ([image isKindOfClass:[UIImage class]]) [thumbCell showImage:image]; // Show image from cache
 }
 
-- (void)thumbsView:(ReaderThumbsView *)thumbsView refreshThumbCell:(ThumbsPageThumb *)thumbCell forIndex:(NSInteger)index
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView refreshThumbCell:(ThumbsPageThumb *)thumbCell forIndex:(NSInteger)index
 {
 	NSInteger page = (showBookmarked ? [[bookmarked objectAtIndex:index] integerValue] : (index + 1));
 
 	[thumbCell showBookmark:[document.bookmarks containsIndex:page]]; // Show bookmarked status
 }
 
-- (void)thumbsView:(ReaderThumbsView *)thumbsView didSelectThumbWithIndex:(NSInteger)index
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView didSelectThumbWithIndex:(NSInteger)index
 {
 	NSInteger page = (showBookmarked ? [[bookmarked objectAtIndex:index] integerValue] : (index + 1));
 
@@ -311,7 +310,7 @@
 	[delegate dismissThumbsViewController:self]; // Dismiss thumbs display
 }
 
-- (void)thumbsView:(ReaderThumbsView *)thumbsView didPressThumbWithIndex:(NSInteger)index
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView didPressThumbWithIndex:(NSInteger)index
 {
 	NSInteger page = (showBookmarked ? [[bookmarked objectAtIndex:index] integerValue] : (index + 1));
 
@@ -399,7 +398,7 @@
 		backView.autoresizingMask = UIViewAutoresizingNone;
 		backView.backgroundColor = [UIColor whiteColor];
 
-    if([ReaderConfig sharedReaderConfig].pageShadowsEnabled)
+    if([PDFReaderConfig sharedConfig].pageShadowsEnabled)
     {
       backView.layer.shadowOffset = CGSizeMake(0.0f, 1.0f);
       backView.layer.shadowRadius = 3.0f; backView.layer.shadowOpacity = 1.0f;
@@ -458,7 +457,7 @@
 
 	tintView.frame = imageView.bounds; backView.bounds = viewRect; backView.center = location;
 
-  if([ReaderConfig sharedReaderConfig].pageShadowsEnabled)
+  if([PDFReaderConfig sharedConfig].pageShadowsEnabled)
   {
     backView.layer.shadowPath = [UIBezierPath bezierPathWithRect:backView.bounds].CGPath;
   }
@@ -476,7 +475,7 @@
 
 	tintView.hidden = YES; tintView.frame = imageView.bounds; backView.frame = defaultRect;
 
-  if([ReaderConfig sharedReaderConfig].pageShadowsEnabled)
+  if([PDFReaderConfig sharedConfig].pageShadowsEnabled)
   {
     backView.layer.shadowPath = [UIBezierPath bezierPathWithRect:backView.bounds].CGPath;
   }

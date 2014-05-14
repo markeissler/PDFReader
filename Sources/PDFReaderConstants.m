@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderConstants.m
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,6 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
+#import "PDFReaderConstants.h"
 
-@interface UIXToolbarView : UIView
-
-@end
-
-#pragma mark -
-
-//
-//	UIXToolbarShadow class interface
-//
-
-@interface UIXToolbarShadow : UIView
-
-@end
+NSString *const kPDFReaderCopyrightNotice = @"PDFReader v2.x • Copyright (C) 2011-2014 Julius Oklamcak. Portions (C) 2014 Mark Eissler. All rights reserved.";

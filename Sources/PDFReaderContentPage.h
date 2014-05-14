@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderContentPage.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,28 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+@interface PDFReaderContentPage : UIView
+
+- (id)initWithURL:(NSURL *)fileURL page:(NSInteger)page password:(NSString *)phrase;
+
+- (id)processSingleTap:(UITapGestureRecognizer *)recognizer;
 
 @end
 
 #pragma mark -
 
 //
-//	UIXToolbarShadow class interface
+//	PDFReaderDocumentLink class interface
 //
 
-@interface UIXToolbarShadow : UIView
+@interface PDFReaderDocumentLink : NSObject <NSObject>
+
+@property (nonatomic, assign, readonly) CGRect rect;
+
+@property (nonatomic, assign, readonly) CGPDFDictionaryRef dictionary;
+
++ (id)newWithRect:(CGRect)linkRect dictionary:(CGPDFDictionaryRef)linkDictionary;
+
+- (id)initWithRect:(CGRect)linkRect dictionary:(CGPDFDictionaryRef)linkDictionary;
 
 @end

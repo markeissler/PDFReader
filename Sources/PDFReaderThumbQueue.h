@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderThumbQueue.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,32 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-@interface UIXToolbarView : UIView
+@interface PDFReaderThumbQueue : NSObject <NSObject>
+
++ (PDFReaderThumbQueue *)sharedInstance;
+
+- (void)addLoadOperation:(NSOperation *)operation;
+
+- (void)addWorkOperation:(NSOperation *)operation;
+
+- (void)cancelOperationsWithGUID:(NSString *)guid;
+
+- (void)cancelAllOperations;
 
 @end
 
 #pragma mark -
 
 //
-//	UIXToolbarShadow class interface
+//	PDFReaderThumbOperation class interface
 //
 
-@interface UIXToolbarShadow : UIView
+@interface PDFReaderThumbOperation : NSOperation
+
+@property (nonatomic, strong, readonly) NSString *guid;
+
+- (id)initWithGUID:(NSString *)guid;
 
 @end

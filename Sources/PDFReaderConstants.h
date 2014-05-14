@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderConstants.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,10 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
+#if !__has_feature(objc_arc)
+	#error ARC (-fobjc-arc) is required to build this code.
+#endif
 
-@interface UIXToolbarView : UIView
+#import <Foundation/Foundation.h>
 
-@end
-
-#pragma mark -
-
-//
-//	UIXToolbarShadow class interface
-//
-
-@interface UIXToolbarShadow : UIView
-
-@end
+extern NSString *const kPDFReaderCopyrightNotice;
