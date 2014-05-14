@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderThumbsView.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,44 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+#import "PDFReaderThumbView.h"
+
+@class PDFReaderThumbsView;
+
+@protocol PDFReaderThumbsViewDelegate <NSObject, UIScrollViewDelegate>
+
+@required // Delegate protocols
+
+- (NSUInteger)numberOfThumbsInThumbsView:(PDFReaderThumbsView *)thumbsView;
+
+- (id)thumbsView:(PDFReaderThumbsView *)thumbsView thumbCellWithFrame:(CGRect)frame;
+
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView updateThumbCell:(id)thumbCell forIndex:(NSInteger)index;
+
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView didSelectThumbWithIndex:(NSInteger)index;
+
+@optional // Delegate protocols
+
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView refreshThumbCell:(id)thumbCell forIndex:(NSInteger)index;
+
+- (void)thumbsView:(PDFReaderThumbsView *)thumbsView didPressThumbWithIndex:(NSInteger)index;
 
 @end
 
-#pragma mark -
+@interface PDFReaderThumbsView : UIScrollView
 
-//
-//	UIXToolbarShadow class interface
-//
+@property (nonatomic, weak, readwrite) id <PDFReaderThumbsViewDelegate> delegate;
 
-@interface UIXToolbarShadow : UIView
+- (void)setThumbSize:(CGSize)thumbSize;
+
+- (void)reloadThumbsCenterOnIndex:(NSInteger)index;
+
+- (void)reloadThumbsContentOffset:(CGPoint)newContentOffset;
+
+- (void)refreshThumbWithIndex:(NSInteger)index;
+
+- (void)refreshVisibleThumbs;
+
+- (CGPoint)insetContentOffset;
 
 @end

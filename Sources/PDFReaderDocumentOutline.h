@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderDocumentOutline.m
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,25 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-@interface UIXToolbarView : UIView
+@interface PDFReaderDocumentOutline : NSObject <NSObject>
+
++ (NSArray *)outlineFromFileURL:(NSURL *)fileURL password:(NSString *)phrase;
+
++ (void)logDocumentOutlineArray:(NSArray *)array;
 
 @end
 
-#pragma mark -
+@interface DocumentOutlineEntry : NSObject <NSObject>
 
-//
-//	UIXToolbarShadow class interface
-//
++ (id)newWithTitle:(NSString *)title target:(id)target level:(NSInteger)level;
 
-@interface UIXToolbarShadow : UIView
+- (id)initWithTitle:(NSString *)title target:(id)target level:(NSInteger)level;
+
+@property (nonatomic, assign, readonly) NSInteger level;
+@property (nonatomic, strong, readwrite) NSMutableArray *children;
+@property (nonatomic, strong, readonly) NSString *title;
+@property (nonatomic, strong, readonly) id target;
 
 @end

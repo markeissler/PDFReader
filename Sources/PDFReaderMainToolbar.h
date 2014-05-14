@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderMainToolbar.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,32 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+#import "UIXToolbarView.h"
+
+@class PDFReaderMainToolbar;
+@class PDFReaderDocument;
+
+@protocol PDFReaderMainToolbarDelegate <NSObject>
+
+@required // Delegate protocols
+
+- (void)tappedInToolbar:(PDFReaderMainToolbar *)toolbar doneButton:(UIButton *)button;
+- (void)tappedInToolbar:(PDFReaderMainToolbar *)toolbar thumbsButton:(UIButton *)button;
+- (void)tappedInToolbar:(PDFReaderMainToolbar *)toolbar printButton:(UIButton *)button;
+- (void)tappedInToolbar:(PDFReaderMainToolbar *)toolbar emailButton:(UIButton *)button;
+- (void)tappedInToolbar:(PDFReaderMainToolbar *)toolbar markButton:(UIButton *)button;
 
 @end
 
-#pragma mark -
+@interface PDFReaderMainToolbar : UIXToolbarView
 
-//
-//	UIXToolbarShadow class interface
-//
+@property (nonatomic, weak, readwrite) id <PDFReaderMainToolbarDelegate> delegate;
 
-@interface UIXToolbarShadow : UIView
+- (id)initWithFrame:(CGRect)frame document:(PDFReaderDocument *)object;
+
+- (void)setBookmarkState:(BOOL)state;
+
+- (void)hideToolbar;
+- (void)showToolbar;
 
 @end

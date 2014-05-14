@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderViewController.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,22 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+#import "PDFReaderDocument.h"
+
+@class PDFReaderViewController;
+
+@protocol PDFReaderViewControllerDelegate <NSObject>
+
+@optional // Delegate protocols
+
+- (void)dismissReaderViewController:(PDFReaderViewController *)viewController;
 
 @end
 
-#pragma mark -
+@interface PDFReaderViewController : UIViewController
 
-//
-//	UIXToolbarShadow class interface
-//
+@property (nonatomic, weak, readwrite) id <PDFReaderViewControllerDelegate> delegate;
 
-@interface UIXToolbarShadow : UIView
+- (id)initWithReaderDocument:(PDFReaderDocument *)object;
 
 @end

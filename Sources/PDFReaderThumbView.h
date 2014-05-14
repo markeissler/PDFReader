@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderThumbView.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,21 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+@interface PDFReaderThumbView : UIView
+{
+@protected // Instance variables
 
-@end
+	UIImageView *imageView;
+}
 
-#pragma mark -
+@property (atomic, strong, readwrite) NSOperation *operation;
 
-//
-//	UIXToolbarShadow class interface
-//
+@property (nonatomic, assign, readwrite) NSUInteger targetTag;
 
-@interface UIXToolbarShadow : UIView
+- (void)showImage:(UIImage *)image;
+
+- (void)showTouched:(BOOL)touched;
+
+- (void)reuse;
 
 @end

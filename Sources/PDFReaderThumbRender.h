@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderThumbRender.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,14 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-@interface UIXToolbarView : UIView
+#import "PDFReaderThumbQueue.h"
 
-@end
+@class PDFReaderThumbRequest;
 
-#pragma mark -
+@interface PDFReaderThumbRender : PDFReaderThumbOperation
 
-//
-//	UIXToolbarShadow class interface
-//
-
-@interface UIXToolbarShadow : UIView
+- (id)initWithRequest:(PDFReaderThumbRequest *)options;
 
 @end

@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderDocument.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,29 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-@interface UIXToolbarView : UIView
+@interface PDFReaderDocument : NSObject <NSObject, NSCoding>
 
-@end
+@property (nonatomic, strong, readonly) NSString *guid;
+@property (nonatomic, strong, readonly) NSDate *fileDate;
+@property (nonatomic, strong, readwrite) NSDate *lastOpen;
+@property (nonatomic, strong, readonly) NSNumber *fileSize;
+@property (nonatomic, strong, readonly) NSNumber *pageCount;
+@property (nonatomic, strong, readwrite) NSNumber *pageNumber;
+@property (nonatomic, strong, readonly) NSMutableIndexSet *bookmarks;
+@property (nonatomic, strong, readonly) NSString *fileName;
+@property (nonatomic, strong, readonly) NSString *password;
+@property (nonatomic, strong, readonly) NSURL *fileURL;
 
-#pragma mark -
++ (PDFReaderDocument *)withDocumentFilePath:(NSString *)filename password:(NSString *)phrase;
 
-//
-//	UIXToolbarShadow class interface
-//
++ (PDFReaderDocument *)unarchiveFromFileName:(NSString *)filename password:(NSString *)phrase;
 
-@interface UIXToolbarShadow : UIView
+- (id)initWithFilePath:(NSString *)fullFilePath password:(NSString *)phrase;
+
+- (void)saveReaderDocument;
+
+- (void)updateProperties;
 
 @end

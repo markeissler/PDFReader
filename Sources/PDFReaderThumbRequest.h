@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderThumbRequest.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,23 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+@class PDFReaderThumbView;
 
-@end
+@interface PDFReaderThumbRequest : NSObject <NSObject>
 
-#pragma mark -
+@property (nonatomic, strong, readonly) NSURL *fileURL;
+@property (nonatomic, strong, readonly) NSString *guid;
+@property (nonatomic, strong, readonly) NSString *password;
+@property (nonatomic, strong, readonly) NSString *cacheKey;
+@property (nonatomic, strong, readonly) NSString *thumbName;
+@property (nonatomic, strong, readwrite) PDFReaderThumbView *thumbView;
+@property (nonatomic, assign, readonly) NSUInteger targetTag;
+@property (nonatomic, assign, readonly) NSInteger thumbPage;
+@property (nonatomic, assign, readonly) CGSize thumbSize;
+@property (nonatomic, assign, readonly) CGFloat scale;
 
-//
-//	UIXToolbarShadow class interface
-//
++ (id)newForView:(PDFReaderThumbView *)view fileURL:(NSURL *)url password:(NSString *)phrase guid:(NSString *)guid page:(NSInteger)page size:(CGSize)size;
 
-@interface UIXToolbarShadow : UIView
+- (id)initWithView:(PDFReaderThumbView *)view fileURL:(NSURL *)url password:(NSString *)phrase guid:(NSString *)guid page:(NSInteger)page size:(CGSize)size;
 
 @end
