@@ -62,14 +62,18 @@
 
 #pragma mark Constants
 
-#define PAGING_VIEWS 3
+/**
+ *  Size of the contentViews "window" buffer represented as previous and
+ *    subsequent pages (each a contentView) added to theScrollView as subviews.
+ *    Usually, 3 is enough (one page before and one after the target). Setting
+ *    to 1 will result in the display of a single page. Usually, an odd number.
+ */
+const NSInteger kPDFReaderDefaultPagingViews = 3;
 
-#define STATUS_HEIGHT 20.0f
-
-#define TOOLBAR_HEIGHT 44.0f
-#define PAGEBAR_HEIGHT 48.0f
-
-#define TAP_AREA_SIZE 48.0f
+const CGFloat kPDFReaderDefaultStatusBarHeight = 20.0f;
+const CGFloat kPDFReaderDefaultToolBarHeight = 44.0f;
+const CGFloat kPDFReaderDefaultPageBarHeight = 48.0f;
+const CGFloat kPDFReaderDefaultTapAreaSize = 48.0f;
 
 #pragma mark Properties
 
@@ -79,51 +83,60 @@
 
 - (void)updateScrollViewContentSize
 {
-	NSInteger count = [document.pageCount integerValue];
+  NSInteger pageCount = [document.pageCount integerValue];
 
-	if (count > PAGING_VIEWS) count = PAGING_VIEWS; // Limit
+  // Limit theScrollView width to the size of the contentViews window
+  if (pageCount > kPDFReaderDefaultPagingViews)
+    pageCount = kPDFReaderDefaultPagingViews;
 
-	CGFloat contentHeight = theScrollView.bounds.size.height;
+  CGFloat contentHeight = theScrollView.bounds.size.height;
 
-	CGFloat contentWidth = (theScrollView.bounds.size.width * count);
+  CGFloat contentWidth = (theScrollView.bounds.size.width * pageCount);
 
-	theScrollView.contentSize = CGSizeMake(contentWidth, contentHeight);
+  theScrollView.contentSize = CGSizeMake(contentWidth, contentHeight);
 }
 
 - (void)updateScrollViewContentViews
 {
-	[self updateScrollViewContentSize]; // Update the content size
+  // Update theScrollView content size
+  [self updateScrollViewContentSize];
 
-	NSMutableIndexSet *pageSet = [NSMutableIndexSet indexSet]; // Page set
+  NSMutableIndexSet* pageSet = [NSMutableIndexSet indexSet];
 
-	[contentViews enumerateKeysAndObjectsUsingBlock: // Enumerate content views
-		^(id key, id object, BOOL *stop)
-		{
-			PDFReaderContentView *contentView = object; [pageSet addIndex:contentView.tag];
-		}
-	];
+  // Enumerate contentViews and add page number of each view to pageSet
+  [contentViews
+      enumerateKeysAndObjectsUsingBlock:^(id key, id object, BOOL* stop) {
+          PDFReaderContentView* contentView = object;
+          [pageSet addIndex:contentView.tag];
+      }];
 
-	__block CGRect viewRect = CGRectZero; viewRect.size = theScrollView.bounds.size;
+  __block CGRect viewRect = CGRectZero;
+  viewRect.size = theScrollView.bounds.size;
 
-	__block CGPoint contentOffset = CGPointZero; NSInteger page = [document.pageNumber integerValue];
+  __block CGPoint contentOffset = CGPointZero;
+  NSInteger page = [document.pageNumber integerValue];
 
-	[pageSet enumerateIndexesUsingBlock: // Enumerate page number set
-		^(NSUInteger number, BOOL *stop)
-		{
-			NSNumber *key = [NSNumber numberWithInteger:number]; // # key
+  // Enumerate pageSet and update each contentView's viewRect, we increase
+  // the width of the viewRect as we go along, and save the contentOffset of
+  // our current selected page when we come across it.
+  [pageSet enumerateIndexesUsingBlock:^(NSUInteger number, BOOL* stop) {
+      NSNumber* key = [NSNumber numberWithInteger:number];
 
-			PDFReaderContentView *contentView = [contentViews objectForKey:key];
+      PDFReaderContentView* contentView = [contentViews objectForKey:key];
 
-			contentView.frame = viewRect; if (page == number) contentOffset = viewRect.origin;
+      contentView.frame = viewRect;
+      if (page == number)
+        contentOffset = viewRect.origin;
 
-			viewRect.origin.x += viewRect.size.width; // Next view frame position
-		}
-	];
-
-	if (CGPointEqualToPoint(theScrollView.contentOffset, contentOffset) == false)
-	{
-		theScrollView.contentOffset = contentOffset; // Update content offset
-	}
+      // Next view frame position
+      viewRect.origin.x += viewRect.size.width;
+  }];
+  
+  // Update theScrollView content offset if needed
+  if (CGPointEqualToPoint(theScrollView.contentOffset, contentOffset)
+      == false) {
+    theScrollView.contentOffset = contentOffset;
+  }
 }
 
 - (void)updateToolbarBookmarkIcon
@@ -132,178 +145,209 @@
 
 	BOOL bookmarked = [document.bookmarks containsIndex:page];
 
-	[mainToolbar setBookmarkState:bookmarked]; // Update
+	[mainToolbar setBookmarkState:bookmarked];
 }
 
 - (void)showDocumentPage:(NSInteger)page
 {
-	if (page != currentPage) // Only if different
-	{
-		NSInteger minValue; NSInteger maxValue;
-		NSInteger maxPage = [document.pageCount integerValue];
-		NSInteger minPage = 1;
+  if (page == currentPage)
+    return;
 
-		if ((page < minPage) || (page > maxPage)) return;
+  NSInteger minValue;
+  NSInteger maxValue;
+  NSInteger minPage = 1;
+  NSInteger maxPage = [document.pageCount integerValue];
 
-		if (maxPage <= PAGING_VIEWS) // Few pages
-		{
-			minValue = minPage;
-			maxValue = maxPage;
-		}
-		else // Handle more pages
-		{
-			minValue = (page - 1);
-			maxValue = (page + 1);
+  // number of contentViews added to parent view (theScrollView)
+  NSInteger pagingViews = kPDFReaderDefaultPagingViews;
+  
+  if ((page < minPage) || (page > maxPage)) return;
+  
+  // Determine beginning and end point (in pages) of our contentView buffer,
+  // which acts like a "window" where most times, our target page is in the
+  // middle of the stack, surrounded by previous and subsequent pages. Each
+  // pages is stuffed in a contentView.
+  minValue = (page - floorf(pagingViews/2));
+  maxValue = (page + floorf(pagingViews/2));
+  if (minValue < minPage) {
+    minValue = 1;
+    maxValue = MIN(minValue + (pagingViews - 1), maxPage);
+  } else if (maxValue > maxPage) {
+    minValue = MAX(maxPage - (pagingViews - 1), 1);
+    maxValue = maxPage;
+  }
 
-			if (minValue < minPage)
-				{minValue++; maxValue++;}
-			else
-				if (maxValue > maxPage)
-					{minValue--; maxValue--;}
-		}
+  NSMutableIndexSet *newPageSet = [NSMutableIndexSet new];
+  NSMutableDictionary *unusedViews = [contentViews mutableCopy];
+  CGRect viewRect = CGRectZero;
+  viewRect.size = theScrollView.bounds.size;
 
-		NSMutableIndexSet *newPageSet = [NSMutableIndexSet new];
+  for (NSInteger number = minValue; number <= maxValue; number++)
+  {
+    NSNumber *key = [NSNumber numberWithInteger:number];
+    PDFReaderContentView *contentView = [contentViews objectForKey:key];
 
-		NSMutableDictionary *unusedViews = [contentViews mutableCopy];
+    if (contentView == nil) {
+      // Page not present in contentViews array, create a new document content
+      // view and add it.
+      NSURL *fileURL = document.fileURL;
+      NSString *phrase = document.password;
 
-		CGRect viewRect = CGRectZero; viewRect.size = theScrollView.bounds.size;
+      contentView = [[PDFReaderContentView alloc] initWithFrame:viewRect
+                                                        fileURL:fileURL
+                                                           page:number
+                                                       password:phrase];
 
-		for (NSInteger number = minValue; number <= maxValue; number++)
-		{
-			NSNumber *key = [NSNumber numberWithInteger:number]; // # key
+      [theScrollView addSubview:contentView];
+      [contentViews setObject:contentView forKey:key];
 
-			PDFReaderContentView *contentView = [contentViews objectForKey:key];
+      contentView.message = self;
+      [newPageSet addIndex:number];
+    } else {
+      // Reposition the existing content view
+      contentView.frame = viewRect;
+      [contentView zoomReset];
 
-			if (contentView == nil) // Create a brand new document content view
-			{
-				NSURL *fileURL = document.fileURL; NSString *phrase = document.password; // Document properties
+      // Remove unusedViews
+      [unusedViews removeObjectForKey:key];
+    }
 
-				contentView = [[PDFReaderContentView alloc] initWithFrame:viewRect fileURL:fileURL page:number password:phrase];
+    viewRect.origin.x += viewRect.size.width;
+  }
 
-				[theScrollView addSubview:contentView]; [contentViews setObject:contentView forKey:key];
+  // Remove unused views and release mutable dictionary object
+  [unusedViews enumerateKeysAndObjectsUsingBlock:
+    ^(id key, id object, BOOL *stop)
+    {
+      [contentViews removeObjectForKey:key];
 
-				contentView.message = self; [newPageSet addIndex:number];
-			}
-			else // Reposition the existing content view
-			{
-				contentView.frame = viewRect; [contentView zoomReset];
+      PDFReaderContentView *contentView = object;
 
-				[unusedViews removeObjectForKey:key];
-			}
+      [contentView removeFromSuperview];
+    }
+  ];
+  unusedViews = nil;
 
-			viewRect.origin.x += viewRect.size.width;
-		}
+  CGFloat contentViewWidth = viewRect.size.width;
+  CGPoint contentOffset = CGPointZero;
 
-		[unusedViews enumerateKeysAndObjectsUsingBlock: // Remove unused views
-			^(id key, id object, BOOL *stop)
-			{
-				[contentViews removeObjectForKey:key];
+  // Determine offset from first contentView (subview) to target, then update
+  // theScrollView content offset if needed.
+  NSInteger targetViewOffset = (page - minValue);
+  contentOffset.x = contentViewWidth * targetViewOffset;
+  if (CGPointEqualToPoint(theScrollView.contentOffset, contentOffset) == false)
+  {
+    theScrollView.contentOffset = contentOffset;
+  }
 
-				PDFReaderContentView *contentView = object;
+  // Update document page number if different from page
+  if ([document.pageNumber integerValue] != page)
+  {
+    document.pageNumber = [NSNumber numberWithInteger:page];
+  }
 
-				[contentView removeFromSuperview];
-			}
-		];
+  NSURL *fileURL = document.fileURL; NSString *phrase = document.password; NSString *guid = document.guid;
 
-		unusedViews = nil; // Release unused views
+  // Preview visible page first
+  if ([newPageSet containsIndex:page] == YES)
+  {
+    NSNumber *key = [NSNumber numberWithInteger:page];
 
-		CGFloat viewWidthX1 = viewRect.size.width;
-		CGFloat viewWidthX2 = (viewWidthX1 * 2.0f);
+    PDFReaderContentView *targetView = [contentViews objectForKey:key];
 
-		CGPoint contentOffset = CGPointZero;
+    [targetView showPageThumb:fileURL page:page password:phrase guid:guid];
 
-		if (maxPage >= PAGING_VIEWS)
-		{
-			if (page == maxPage)
-				contentOffset.x = viewWidthX2;
-			else
-				if (page != minPage)
-					contentOffset.x = viewWidthX1;
-		}
-		else
-			if (page == (PAGING_VIEWS - 1))
-				contentOffset.x = viewWidthX1;
+    // Remove visible page from set
+    [newPageSet removeIndex:page];
+  }
 
-		if (CGPointEqualToPoint(theScrollView.contentOffset, contentOffset) == false)
-		{
-			theScrollView.contentOffset = contentOffset; // Update content offset
-		}
+  // Show previews
+  [newPageSet enumerateIndexesWithOptions:NSEnumerationReverse usingBlock:
+    ^(NSUInteger number, BOOL *stop)
+    {
+      NSNumber *key = [NSNumber numberWithInteger:number];
 
-		if ([document.pageNumber integerValue] != page) // Only if different
-		{
-			document.pageNumber = [NSNumber numberWithInteger:page]; // Update page number
-		}
+      PDFReaderContentView *targetView = [contentViews objectForKey:key];
 
-		NSURL *fileURL = document.fileURL; NSString *phrase = document.password; NSString *guid = document.guid;
+      [targetView showPageThumb:fileURL page:number password:phrase guid:guid];
+    }
+  ];
 
-		if ([newPageSet containsIndex:page] == YES) // Preview visible page first
-		{
-			NSNumber *key = [NSNumber numberWithInteger:page]; // # key
+  // Release new page set
+  newPageSet = nil;
 
-			PDFReaderContentView *targetView = [contentViews objectForKey:key];
+  // Update the pagebar display
+  [mainPagebar updatePagebar];
 
-			[targetView showPageThumb:fileURL page:page password:phrase guid:guid];
+  // Update bookmark
+  [self updateToolbarBookmarkIcon];
 
-			[newPageSet removeIndex:page]; // Remove visible page from set
-		}
-
-		[newPageSet enumerateIndexesWithOptions:NSEnumerationReverse usingBlock: // Show previews
-			^(NSUInteger number, BOOL *stop)
-			{
-				NSNumber *key = [NSNumber numberWithInteger:number]; // # key
-
-				PDFReaderContentView *targetView = [contentViews objectForKey:key];
-
-				[targetView showPageThumb:fileURL page:number password:phrase guid:guid];
-			}
-		];
-
-		newPageSet = nil; // Release new page set
-
-		[mainPagebar updatePagebar]; // Update the pagebar display
-
-		[self updateToolbarBookmarkIcon]; // Update bookmark
-
-		currentPage = page; // Track current page number
-	}
+  // Track current page number
+  currentPage = page;
 }
 
 - (void)showDocument:(id)object
 {
-	[self updateScrollViewContentSize]; // Set content size
+  // Update theScrollView content size
+	[self updateScrollViewContentSize];
 
 	[self showDocumentPage:[document.pageNumber integerValue]];
 
-	document.lastOpen = [NSDate date]; // Update last opened date
+	document.lastOpen = [NSDate date];
 
-	isVisible = YES; // iOS present modal bodge
+	isVisible = YES;
 }
 
 #pragma mark UIViewController methods
 
-- (id)initWithReaderDocument:(PDFReaderDocument *)object
-{
-	id reader = nil; // PDFReaderViewController object
+// Override UIViewController's designated initalizer to throw an exception
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+  @throw [NSException exceptionWithName:@"Wrong initalizer"
+                                 reason:@"Call initWithReaderDocument"
+                                 userInfo:nil];
+  
+  return nil;
+}
 
-	if ((object != nil) && ([object isKindOfClass:[PDFReaderDocument class]]))
-	{
-		if ((self = [super initWithNibName:nil bundle:nil])) // Designated initializer
-		{
-			NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+// Designated initialzer
+- (instancetype)initWithReaderDocument:(PDFReaderDocument *)object {
 
-			[notificationCenter addObserver:self selector:@selector(applicationWill:) name:UIApplicationWillTerminateNotification object:nil];
+  if (object == nil)
+    @throw [NSException exceptionWithName:@"Missing arguments"
+                                   reason:@"object is nil"
+                                 userInfo:nil];
+  
+  if (![object isKindOfClass:[PDFReaderDocument class]])
+    @throw [NSException exceptionWithName:@"Wrong type"
+                                   reason:@"object is wrong type"
+                                 userInfo:nil];
+  
+  self = [super initWithNibName:nil bundle:nil];
+  if (self)
+  {
+    NSNotificationCenter *notificationCenter =
+        [NSNotificationCenter defaultCenter];
 
-			[notificationCenter addObserver:self selector:@selector(applicationWill:) name:UIApplicationWillResignActiveNotification object:nil];
+    [notificationCenter addObserver:self
+                           selector:@selector(applicationWill:)
+                               name:UIApplicationWillTerminateNotification
+                             object:nil];
 
-			[object updateProperties]; document = object; // Retain the supplied PDFReaderDocument object for our use
+    [notificationCenter addObserver:self
+                           selector:@selector(applicationWill:)
+                               name:UIApplicationWillResignActiveNotification
+                             object:nil];
 
-			[PDFReaderThumbCache touchThumbCacheWithGUID:object.guid]; // Touch the document thumb cache directory
+    [object updateProperties];
+    
+    // Retain the supplied PDFReaderDocument object for our use
+    document = object;
+    
+    // Touch the document thumb cache directory
+    [PDFReaderThumbCache touchThumbCacheWithGUID:object.guid];
+  }
 
-			reader = self; // Return an initialized PDFReaderViewController object
-		}
-	}
-
-	return reader;
+  return self;
 }
 
 - (void)viewDidLoad
@@ -321,14 +365,15 @@
 		if ([self prefersStatusBarHidden] == NO) // Visible status bar
 		{
 			CGRect statusBarRect = self.view.bounds; // Status bar frame
-			statusBarRect.size.height = STATUS_HEIGHT; // Default status height
+			statusBarRect.size.height = kPDFReaderDefaultStatusBarHeight;
 			fakeStatusBar = [[UIView alloc] initWithFrame:statusBarRect]; // UIView
 			fakeStatusBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 			fakeStatusBar.backgroundColor = [UIColor blackColor];
 			fakeStatusBar.contentMode = UIViewContentModeRedraw;
 			fakeStatusBar.userInteractionEnabled = NO;
 
-			scrollViewRect.origin.y += STATUS_HEIGHT; scrollViewRect.size.height -= STATUS_HEIGHT;
+			scrollViewRect.origin.y += kPDFReaderDefaultStatusBarHeight;
+      scrollViewRect.size.height -= kPDFReaderDefaultStatusBarHeight;
 		}
 	}
 
@@ -341,14 +386,14 @@
 	[self.view addSubview:theScrollView];
 
 	CGRect toolbarRect = scrollViewRect; // Toolbar frame
-	toolbarRect.size.height = TOOLBAR_HEIGHT; // Default toolbar height
+	toolbarRect.size.height = kPDFReaderDefaultToolBarHeight; // Default toolbar height
 	mainToolbar = [[PDFReaderMainToolbar alloc] initWithFrame:toolbarRect document:document]; // PDFReaderMainToolbar
 	mainToolbar.delegate = self; // PDFReaderMainToolbarDelegate
 	[self.view addSubview:mainToolbar];
 
 	CGRect pagebarRect = self.view.bounds;; // Pagebar frame
-	pagebarRect.origin.y = (pagebarRect.size.height - PAGEBAR_HEIGHT);
-	pagebarRect.size.height = PAGEBAR_HEIGHT; // Default pagebar height
+	pagebarRect.origin.y = (pagebarRect.size.height - kPDFReaderDefaultPageBarHeight);
+	pagebarRect.size.height = kPDFReaderDefaultPageBarHeight; // Default pagebar height
 	mainPagebar = [[PDFReaderMainPagebar alloc] initWithFrame:pagebarRect document:document]; // PDFReaderMainPagebar
 	mainPagebar.delegate = self; // PDFReaderMainPagebarDelegate
 	[self.view addSubview:mainPagebar];
@@ -582,7 +627,7 @@
 
 		CGPoint point = [recognizer locationInView:recognizer.view];
 
-		CGRect areaRect = CGRectInset(viewRect, TAP_AREA_SIZE, 0.0f); // Area
+		CGRect areaRect = CGRectInset(viewRect, kPDFReaderDefaultTapAreaSize, 0.0f); // Area
 
 		if (CGRectContainsPoint(areaRect, point)) // Single tap is inside the area
 		{
@@ -644,8 +689,8 @@
 		}
 
 		CGRect nextPageRect = viewRect;
-		nextPageRect.size.width = TAP_AREA_SIZE;
-		nextPageRect.origin.x = (viewRect.size.width - TAP_AREA_SIZE);
+		nextPageRect.size.width = kPDFReaderDefaultTapAreaSize;
+		nextPageRect.origin.x = (viewRect.size.width - kPDFReaderDefaultTapAreaSize);
 
 		if (CGRectContainsPoint(nextPageRect, point)) // page++ area
 		{
@@ -653,7 +698,7 @@
 		}
 
 		CGRect prevPageRect = viewRect;
-		prevPageRect.size.width = TAP_AREA_SIZE;
+		prevPageRect.size.width = kPDFReaderDefaultTapAreaSize;
 
 		if (CGRectContainsPoint(prevPageRect, point)) // page-- area
 		{
@@ -670,7 +715,7 @@
 
 		CGPoint point = [recognizer locationInView:recognizer.view];
 
-		CGRect zoomArea = CGRectInset(viewRect, TAP_AREA_SIZE, TAP_AREA_SIZE);
+		CGRect zoomArea = CGRectInset(viewRect, kPDFReaderDefaultTapAreaSize, kPDFReaderDefaultTapAreaSize);
 
 		if (CGRectContainsPoint(zoomArea, point)) // Double tap is in the zoom area
 		{
@@ -697,8 +742,8 @@
 		}
 
 		CGRect nextPageRect = viewRect;
-		nextPageRect.size.width = TAP_AREA_SIZE;
-		nextPageRect.origin.x = (viewRect.size.width - TAP_AREA_SIZE);
+		nextPageRect.size.width = kPDFReaderDefaultTapAreaSize;
+		nextPageRect.origin.x = (viewRect.size.width - kPDFReaderDefaultTapAreaSize);
 
 		if (CGRectContainsPoint(nextPageRect, point)) // page++ area
 		{
@@ -706,7 +751,7 @@
 		}
 
 		CGRect prevPageRect = viewRect;
-		prevPageRect.size.width = TAP_AREA_SIZE;
+		prevPageRect.size.width = kPDFReaderDefaultTapAreaSize;
 
 		if (CGRectContainsPoint(prevPageRect, point)) // page-- area
 		{
@@ -727,7 +772,7 @@
 
 			CGPoint point = [touch locationInView:self.view]; // Touch location
 
-			CGRect areaRect = CGRectInset(self.view.bounds, TAP_AREA_SIZE, TAP_AREA_SIZE);
+			CGRect areaRect = CGRectInset(self.view.bounds, kPDFReaderDefaultTapAreaSize, kPDFReaderDefaultTapAreaSize);
 
 			if (CGRectContainsPoint(areaRect, point) == false) return;
 		}
