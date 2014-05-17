@@ -83,8 +83,8 @@ extern const BOOL kPDFReaderDefaultIdleTimerDisabled;
 extern const BOOL kPDFReaderDefaultMultimodeDisabled;
 
 /**
- *  `PDFReaderConfig` is a singleton class that manages PDFReader global configuration
- *  parameters.
+ *  `PDFReaderConfig` is a singleton class that manages PDFReader global
+ *  configuration parameters.
  */
 @interface PDFReaderConfig : NSObject
 
@@ -93,7 +93,8 @@ extern const BOOL kPDFReaderDefaultMultimodeDisabled;
  *
  *  @see kPDFReaderDefaultBookmarksEnabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isBookmarksEnabled) BOOL bookmarksEnabled;
+@property (nonatomic, readwrite, unsafe_unretained, getter=isBookmarksEnabled)
+    BOOL bookmarksEnabled;
 
 /**
  *  Enable addition of mail button to toolbar.
@@ -103,7 +104,8 @@ extern const BOOL kPDFReaderDefaultMultimodeDisabled;
  *
  *  @see kPDFReaderDefaultMailButtonEnabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isMailButtonEnabled) BOOL mailButtonEnabled;
+@property (nonatomic, readwrite, unsafe_unretained, getter=isMailButtonEnabled)
+    BOOL mailButtonEnabled;
 
 /**
  *  Enable addition of print button to toolbar.
@@ -112,24 +114,25 @@ extern const BOOL kPDFReaderDefaultMultimodeDisabled;
  *  Only enabled if printing is supported and available on the device.
  *
  *  @see kPDFReaderDefaultPrintButtonEnabled
-
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isPrintButtonEnabled) BOOL printButtonEnabled;
+@property (nonatomic, readwrite, unsafe_unretained, getter=isPrintButtonEnabled)
+    BOOL printButtonEnabled;
 
 /**
  *  Enable addition of thumbnails button to toolbar.
  *
  *  @see kPDFReaderDefaultThumbsButtonEnabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isThumbsButtonEnabled) BOOL thumbsButtonEnabled;
-
+@property (nonatomic, readwrite, unsafe_unretained,
+           getter=isThumbsButtonEnabled) BOOL thumbsButtonEnabled;
 /**
  *  Enable display of medium resolution page thumbnail is displayed before the
  *  CATiledLayer starts to render the PDF page.
  *
  *  @see kPDFReaderDefaultPreviewThumbEnabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isPreviewThumbEnabled) BOOL previewThumbEnabled;
+@property (nonatomic, readwrite, unsafe_unretained,
+           getter=isPreviewThumbEnabled) BOOL previewThumbEnabled;
 
 /**
  *  Enable generation of page shadow around each page and inset page content
@@ -137,7 +140,8 @@ extern const BOOL kPDFReaderDefaultMultimodeDisabled;
  *
  *  @see kPDFReaderDefaultPageShadowsEnabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isPageShadowsEnabled) BOOL pageShadowsEnabled;
+@property (nonatomic, readwrite, unsafe_unretained, getter=isPageShadowsEnabled)
+    BOOL pageShadowsEnabled;
 
 /**
  *  When TRUE, sets the CATiledLayer contentScale to 1.0f. This effectively
@@ -146,7 +150,8 @@ extern const BOOL kPDFReaderDefaultMultimodeDisabled;
  *
  *  @see kPDFReaderDefaultRetinaSupportDisabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isRetinaSupportDisabled) BOOL retinaSupportDisabled;
+@property (nonatomic, readwrite, unsafe_unretained,
+           getter=isRetinaSupportDisabled) BOOL retinaSupportDisabled;
 
 /**
  *  When TRUE, the iOS idle timer is disabled while viewing a document (beware
@@ -154,7 +159,8 @@ extern const BOOL kPDFReaderDefaultMultimodeDisabled;
  *
  *  @see kPDFReaderDefaultIdleTimerDisabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isIdleTimerDisabled) BOOL idleTimerDisabled;
+@property (nonatomic, readwrite, unsafe_unretained, getter=isIdleTimerDisabled)
+    BOOL idleTimerDisabled;
 
 /**
  *  Disable addition of Done button to toolbar.
@@ -165,7 +171,8 @@ extern const BOOL kPDFReaderDefaultMultimodeDisabled;
  *
  *  @see kPDFReaderDefaultMultimodeDisabled
  */
-@property (nonatomic, readwrite, unsafe_unretained, getter = isMultimodeDisabled) BOOL multimodeDisabled;
+@property (nonatomic, readwrite, unsafe_unretained, getter=isMultimodeDisabled)
+    BOOL multimodeDisabled;
 
 /**
  * -----------------------------------------------------------------------------
