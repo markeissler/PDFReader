@@ -1,7 +1,7 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderAppDelegate.h
 //
-//  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
+//	Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
 //
 //	Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,16 +24,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
-
-@end
-
-#pragma mark -
-
-//
-//	UIXToolbarShadow class interface
-//
-
-@interface UIXToolbarShadow : UIView
+@interface PDFReaderAppDelegate : NSObject <UIApplicationDelegate>
 
 @end

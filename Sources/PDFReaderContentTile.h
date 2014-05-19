@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderContentTile.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -23,17 +23,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
-@interface UIXToolbarView : UIView
-
-@end
-
-#pragma mark -
-
-//
-//	UIXToolbarShadow class interface
-//
-
-@interface UIXToolbarShadow : UIView
+@interface PDFReaderContentTile : CATiledLayer
 
 @end

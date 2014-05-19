@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderThumbCache.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,30 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+#import "PDFReaderThumbRequest.h"
 
-@end
+@interface PDFReaderThumbCache : NSObject <NSObject>
 
-#pragma mark -
++ (PDFReaderThumbCache *)sharedInstance;
 
-//
-//	UIXToolbarShadow class interface
-//
++ (void)touchThumbCacheWithGUID:(NSString *)guid;
 
-@interface UIXToolbarShadow : UIView
++ (void)createThumbCacheWithGUID:(NSString *)guid;
+
++ (void)removeThumbCacheWithGUID:(NSString *)guid;
+
++ (void)purgeThumbCachesOlderThan:(NSTimeInterval)age;
+
++ (NSString *)thumbCachePathForGUID:(NSString *)guid;
+
+- (id)thumbRequest:(PDFReaderThumbRequest *)request priority:(BOOL)priority;
+
+- (void)setObject:(UIImage *)image forKey:(NSString *)key;
+
+- (void)removeObjectForKey:(NSString *)key;
+
+- (void)removeNullForKey:(NSString *)key;
+
+- (void)removeAllObjects;
 
 @end

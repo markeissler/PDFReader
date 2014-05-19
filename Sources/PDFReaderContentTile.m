@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderContentTile.m
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,49 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
+#import "PDFReaderContentTile.h"
 
-@interface UIXToolbarView : UIView
+@implementation PDFReaderContentTile
 
-@end
+#pragma mark Constants
 
-#pragma mark -
+#define LEVELS_OF_DETAIL 16
 
-//
-//	UIXToolbarShadow class interface
-//
+#pragma mark PDFReaderContentTile class methods
 
-@interface UIXToolbarShadow : UIView
++ (CFTimeInterval)fadeDuration
+{
+	return 0.001; // iOS bug (flickering tiles) workaround
+}
+
+#pragma mark PDFReaderContentTile instance methods
+
+- (id)init
+{
+	if ((self = [super init]))
+	{
+		self.levelsOfDetail = LEVELS_OF_DETAIL; // Zoom levels
+
+		self.levelsOfDetailBias = (LEVELS_OF_DETAIL - 1); // Bias
+
+		UIScreen *mainScreen = [UIScreen mainScreen]; // Main screen
+
+		CGFloat screenScale = [mainScreen scale]; // Main screen scale
+
+		CGRect screenBounds = [mainScreen bounds]; // Main screen bounds
+
+		CGFloat w_pixels = (screenBounds.size.width * screenScale);
+
+		CGFloat h_pixels = (screenBounds.size.height * screenScale);
+
+		CGFloat max = ((w_pixels < h_pixels) ? h_pixels : w_pixels);
+
+		CGFloat sizeOfTiles = ((max < 512.0f) ? 512.0f : 1024.0f);
+
+		self.tileSize = CGSizeMake(sizeOfTiles, sizeOfTiles);
+	}
+
+	return self;
+}
 
 @end

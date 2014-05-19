@@ -1,9 +1,8 @@
 //
 //	ThumbsViewController.h
-//	Reader v2.7.1
 //
-//	Created by Julius Oklamcak on 2011-09-01.
-//	Copyright © 2011-2013 Julius Oklamcak. All rights reserved.
+//  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
+//  Portions (C) 2014 Mark Eissler. All rights reserved.
 //
 //	Permission is hereby granted, free of charge, to any person obtaining a copy
 //	of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +25,9 @@
 #import <UIKit/UIKit.h>
 
 #import "ThumbsMainToolbar.h"
-#import "ReaderThumbsView.h"
+#import "PDFReaderThumbsView.h"
 
-@class ReaderDocument;
+@class PDFReaderDocument;
 @class ThumbsViewController;
 
 @protocol ThumbsViewControllerDelegate <NSObject>
@@ -45,7 +44,7 @@
 
 @property (nonatomic, weak, readwrite) id <ThumbsViewControllerDelegate> delegate;
 
-- (id)initWithReaderDocument:(ReaderDocument *)object;
+- (id)initWithReaderDocument:(PDFReaderDocument *)object;
 
 @end
 
@@ -55,7 +54,7 @@
 //	ThumbsPageThumb class interface
 //
 
-@interface ThumbsPageThumb : ReaderThumbView
+@interface ThumbsPageThumb : PDFReaderThumbView
 
 - (CGSize)maximumContentSize;
 

@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderMainPagebar.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,64 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+#import "PDFReaderThumbView.h"
+
+@class PDFReaderMainPagebar;
+@class PDFReaderTrackControl;
+@class PDFReaderPagebarThumb;
+@class PDFReaderDocument;
+
+@protocol PDFReaderMainPagebarDelegate <NSObject>
+
+@required // Delegate protocols
+
+- (void)pagebar:(PDFReaderMainPagebar *)pagebar gotoPage:(NSInteger)page;
+
+@end
+
+@interface PDFReaderMainPagebar : UIView
+
+@property (nonatomic, weak, readwrite) id <PDFReaderMainPagebarDelegate> delegate;
+
+- (id)initWithFrame:(CGRect)frame document:(PDFReaderDocument *)object;
+
+- (void)updatePagebar;
+
+- (void)hidePagebar;
+- (void)showPagebar;
 
 @end
 
 #pragma mark -
 
 //
-//	UIXToolbarShadow class interface
+//	PDFReaderTrackControl class interface
 //
 
-@interface UIXToolbarShadow : UIView
+@interface PDFReaderTrackControl : UIControl
+
+@property (nonatomic, assign, readonly) CGFloat value;
+
+@end
+
+#pragma mark -
+
+//
+//	PDFReaderPagebarThumb class interface
+//
+
+@interface PDFReaderPagebarThumb : PDFReaderThumbView
+
+- (id)initWithFrame:(CGRect)frame small:(BOOL)small;
+
+@end
+
+#pragma mark -
+
+//
+//	PDFReaderPagebarShadow class interface
+//
+
+@interface PDFReaderPagebarShadow : UIView
 
 @end

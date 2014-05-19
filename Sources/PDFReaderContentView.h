@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	PDFReaderContentView.h
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -24,16 +24,42 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIXToolbarView : UIView
+#import "PDFReaderThumbView.h"
+
+@class PDFReaderContentView;
+@class PDFReaderContentPage;
+@class PDFReaderContentThumb;
+
+@protocol PDFReaderContentViewDelegate <NSObject>
+
+@required // Delegate protocols
+
+- (void)contentView:(PDFReaderContentView *)contentView touchesBegan:(NSSet *)touches;
+
+@end
+
+@interface PDFReaderContentView : UIScrollView
+
+@property (nonatomic, weak, readwrite) id <PDFReaderContentViewDelegate> message;
+
+- (id)initWithFrame:(CGRect)frame fileURL:(NSURL *)fileURL page:(NSUInteger)page password:(NSString *)phrase;
+
+- (void)showPageThumb:(NSURL *)fileURL page:(NSInteger)page password:(NSString *)phrase guid:(NSString *)guid;
+
+- (id)processSingleTap:(UITapGestureRecognizer *)recognizer;
+
+- (void)zoomIncrement;
+- (void)zoomDecrement;
+- (void)zoomReset;
 
 @end
 
 #pragma mark -
 
 //
-//	UIXToolbarShadow class interface
+//	PDFReaderContentThumb class interface
 //
 
-@interface UIXToolbarShadow : UIView
+@interface PDFReaderContentThumb : PDFReaderThumbView
 
 @end

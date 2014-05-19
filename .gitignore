@@ -23,8 +23,21 @@ profile
 DerivedData
 .idea/
 
+# RVM
+.ruby-gemset
+.ruby-version
+
 # Pods (CocoaPods)
 Pods
 
 # Documentation (Doxygen or appledoc)
 Documentation
+
+# Doxywrite
+.doxywrite.sh
+.doxywrite-example.cfg
+*-Doxyfile.cfg
+
+# Xcodebump
+.xcodebump.sh
+.xcodebump-example.cfg

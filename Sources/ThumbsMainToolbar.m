@@ -1,9 +1,8 @@
 //
 //	ThumbsMainToolbar.m
-//	Reader v2.6.2
 //
-//	Created by Julius Oklamcak on 2011-09-01.
-//	Copyright © 2011-2013 Julius Oklamcak. All rights reserved.
+//  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
+//  Portions (C) 2014 Mark Eissler. All rights reserved.
 //
 //	Permission is hereby granted, free of charge, to any person obtaining a copy
 //	of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +22,7 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import "ReaderConfig.h"
+#import "PDFReaderConfig.h"
 #import "ThumbsMainToolbar.h"
 
 @implementation ThumbsMainToolbar
@@ -82,7 +81,7 @@
 
 		titleX += (DONE_BUTTON_WIDTH + BUTTON_SPACE); titleWidth -= (DONE_BUTTON_WIDTH + BUTTON_SPACE);
 
-    if([ReaderConfig sharedReaderConfig].bookmarksEnabled)
+    if([PDFReaderConfig sharedConfig].bookmarksEnabled)
     {
       CGFloat showControlX = (viewWidth - (SHOW_CONTROL_WIDTH + BUTTON_SPACE));
 
@@ -103,7 +102,7 @@
 
       [showControl addTarget:self action:@selector(showControlTapped:) forControlEvents:UIControlEventValueChanged];
 
-      [self addSubview:showControl]; 
+      [self addSubview:showControl];
 
       titleWidth -= (SHOW_CONTROL_WIDTH + BUTTON_SPACE);
     } // bookmarksEnabled
@@ -126,7 +125,7 @@
 			titleLabel.minimumScaleFactor = 0.75f;
 			titleLabel.text = title;
 
-			[self addSubview:titleLabel]; 
+			[self addSubview:titleLabel];
 		}
 	}
 

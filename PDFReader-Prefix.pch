@@ -1,5 +1,5 @@
 //
-//	UIXToolbarView.h
+//	Reader-Prefix.pch
 //
 //  Copyright (C) 2011-2013 Julius Oklamcak. All rights reserved.
 //  Portions (C) 2014 Mark Eissler. All rights reserved.
@@ -22,18 +22,10 @@
 //	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
-
-@interface UIXToolbarView : UIView
-
-@end
-
-#pragma mark -
-
-//
-//	UIXToolbarShadow class interface
-//
-
-@interface UIXToolbarShadow : UIView
-
-@end
+#ifdef __OBJC__
+	#import <UIKit/UIKit.h>
+	#import <Foundation/Foundation.h>
+	#import <CoreGraphics/CoreGraphics.h>
+	#import <QuartzCore/QuartzCore.h>
+	#import <ImageIO/ImageIO.h>
+#endif
