@@ -26,6 +26,42 @@
 
 #import "PDFReaderDocument.h"
 
+#pragma mark PDFViewController Constants
+
+/**
+ *  @memberof PDFReaderViewController
+ *  Default value for currentViews "window" buffer.
+ */
+extern const NSInteger kPDFReaderDefaultPagingViews;
+
+/**
+ *  @memberof PDFReaderViewController
+ *  Default value for status bar height.
+ */
+extern const CGFloat kPDFReaderDefaultStatusBarHeight;
+
+/**
+ *  @memberof PDFReaderViewController
+ *  Default value for toolbar height.
+ */
+extern const CGFloat kPDFReaderDefaultToolBarHeight;
+
+/**
+ *  @memberof PDFReaderViewController
+ *  Default value for pagebar height.
+ */
+extern const CGFloat kPDFReaderDefaultPageBarHeight;
+
+/**
+ *  @memberof PDFReaderViewController
+ *  Default value for tap area target size.
+ */
+extern const CGFloat kPDFReaderDefaultTapAreaSize;
+
+
+#pragma mark -
+#pragma mark PDFViewController Class
+
 @class PDFReaderViewController;
 
 @protocol PDFReaderViewControllerDelegate <NSObject>
@@ -40,6 +76,57 @@
 
 @property (nonatomic, weak, readwrite) id <PDFReaderViewControllerDelegate> delegate;
 
-- (id)initWithReaderDocument:(PDFReaderDocument *)object;
+/**
+ *  Initializes and returns a newly allocated PDFReaderViewController object.
+ *
+ *  @param object Reference to an initialized PDFReaderDocument
+ *
+ *  @return Initialized class instance or nil on failure
+ *
+ *  @throws "<Missing arguments>" When object is nil
+ *  @throws "<Wrong type>" When object is not a reference to a PDFReaderDocument
+ *    object
+ *
+ *  @remark Designated initializer.
+ */
+- (instancetype)initWithReaderDocument:(PDFReaderDocument *)object;
+
+/**
+ *  Update the PDFReader's ScrollView width to match document length, or match
+ *    contentView window buffer length.
+ *
+ *  @remark You should call this method if you override in a subclass.
+ */
+- (void)updateScrollViewContentSize;
+
+/**
+ *  Update the viewRect for each contentView in the PDFReader's ScrollView, and
+ *    set the contentOffset to the offset of the contentView for the currently
+ *    selected page.
+ */
+- (void)updateScrollViewContentViews;
+
+/**
+ *  Update bookmark state for each page in the PDFReaderDocument's bookmarks 
+ *    list.
+ */
+- (void)updateToolbarBookmarkIcon;
+
+/**
+ *  Update the PDFReader's ScrollView to display the page specified.
+ *
+ *  @param page The page number
+ */
+- (void)showDocumentPage:(NSInteger)page;
+
+/**
+ *  Display the PDFReaderDocument, scrolling to its currently selected page and
+ *    updating the lastOpen date.
+ *
+ *  @param object Unused
+ *
+ *  @see PDFReaderViewController#initWithReaderDocument:
+ */
+- (void)showDocument:(id)object;
 
 @end
