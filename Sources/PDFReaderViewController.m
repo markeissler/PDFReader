@@ -319,7 +319,7 @@ const CGFloat kPDFReaderDefaultTapAreaSize = 48.0f;
 - (instancetype)initWithNibName:(NSString *)nibNameOrNil
                          bundle:(NSBundle *)nibBundleOrNil
 {
-  @throw [NSException exceptionWithName:@"Wrong initalizer"
+  @throw [NSException exceptionWithName:@"WrongInitializer"
                                  reason:@"Call initWithReaderDocument"
                                userInfo:nil];
 
@@ -330,12 +330,12 @@ const CGFloat kPDFReaderDefaultTapAreaSize = 48.0f;
 - (instancetype)initWithReaderDocument:(PDFReaderDocument *)object {
 
   if (object == nil)
-    @throw [NSException exceptionWithName:@"Missing arguments"
+    @throw [NSException exceptionWithName:@"MissingArguments"
                                    reason:@"object is nil"
                                  userInfo:nil];
   
   if (![object isKindOfClass:[PDFReaderDocument class]])
-    @throw [NSException exceptionWithName:@"Wrong type"
+    @throw [NSException exceptionWithName:@"WrongType"
                                    reason:@"object is wrong type"
                                  userInfo:nil];
   

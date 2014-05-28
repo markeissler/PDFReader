@@ -83,8 +83,8 @@ extern const CGFloat kPDFReaderDefaultTapAreaSize;
  *
  *  @return Initialized class instance or nil on failure
  *
- *  @throws "<Missing arguments>" When object is nil
- *  @throws "<Wrong type>" When object is not a reference to a PDFReaderDocument
+ *  @throws "<MissingArguments>" When object is nil
+ *  @throws "<WrongType>" When object is not a reference to a PDFReaderDocument
  *    object
  *
  *  @remark Designated initializer.
