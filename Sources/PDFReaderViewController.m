@@ -355,7 +355,8 @@ const CGFloat kPDFReaderDefaultTapAreaSize = 48.0f;
                                name:UIApplicationWillResignActiveNotification
                              object:nil];
 
-    [object updateProperties];
+    // FIXME: updateProperties is now a private method. Do we need this here?
+//    [object updateProperties];
     
     // Retain the supplied PDFReaderDocument object for our use
     document = object;
