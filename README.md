@@ -128,7 +128,7 @@ viewing a document (beware of battery drain).
 `BOOL` `retinaSupportDisabled` - If TRUE, sets the CATiledLayer contentScale to 1.0f. This effectively disables retina support and results in non-retina device rendering speeds on retina display devices at the loss of retina display quality.
 
 ### PDFReaderDocument Archiving
-To change where the property list for PDFReaderDocument objects is stored (~/Library/Application Support/ by default), see the +archiveFilePath: method in the PDFReaderDocument.m source file. Archiving and unarchiving of the PDFReaderDocument object for a document is mandatory since this is where the current page number, bookmarks and directory of the document page thumb cache is kept.
+To change where the property list for PDFReaderDocument objects is stored (~/Library/Application Support/ by default), see the +archiveFilePathForFileName: method. Archiving and unarchiving of the PDFReaderDocument object for a document is mandatory since this is where the current page number, bookmarks and directory of the document page thumb cache is kept.
 
 ## Bugs and such
 Submit bugs by opening an issue on this project's github page.
