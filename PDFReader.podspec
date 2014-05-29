@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
  s.name = 'PDFReader'
- s.version = '3.0.0'
+ s.version = '3.0.1-b5'
  s.license = 'MIT'
  s.summary = 'The open source PDF file reader/viewer for iOS.'
  s.homepage = 'http://www.vfr.org/'
  s.authors = { "Julius Oklamcak" => "joklamcak@gmail.com", "Mark Eissler" => "mark@mixtur.com" }
- s.source = { :git => 'https://github.com/markeissler/PDFReader.git', :branch => 'master', :tag => '3.0.0-r4' }
+ s.source = { :git => 'https://github.com/markeissler/PDFReader.git', :branch => 'develop', :tag => '3.0.1-b5' }
  s.platform = :ios
  s.ios.deployment_target = '5.0'
  s.source_files = 'Sources/**/*.{h,m}'
