@@ -1,5 +1,5 @@
 PODS:
-  - Doxywrite (1.1.7)
+  - Doxywrite (1.1.8)
   - Xcodebump (1.1.5)
 
 DEPENDENCIES:
@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
     :git: https://github.com/markeissler/Xcodebump
 
 SPEC CHECKSUMS:
-  Doxywrite: 109463d617e2c0d35be122f32b1f8c548d430c5b
+  Doxywrite: eb35de3944aba13c76f38326a2bfbb1c6730d427
   Xcodebump: 9310eb3ac88fbc87b0bb896e5028ed9df30121e5
 
 COCOAPODS: 0.32.1
